@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import type { CustomerColumn } from '../db/schema/customers'
+import { getAllCustomers } from '../db/queries/customers.queries'
 
 @Injectable()
 export class CustomerService {
-    findAll() {
-        return [
-            { id: 1, name: 'John Doe' },
-            { id: 2, name: 'Jane Smith' },
-        ];
-    }
+	async findAll() {
+		return await getAllCustomers();
+	}
 
-    create(customerData: any) {
-        return {
-            message: 'successful',
-            data: customerData
-        }
-    }
+	create(customerData: Partial<CustomerColumn>) {
+		return {
+			message: 'successful',
+			data: customerData,
+		};
+	}
 }
-

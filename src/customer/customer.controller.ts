@@ -1,17 +1,17 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 
-@Controller('customer')
+@Controller('customers')
 export class CustomerController {
-  constructor(private readonly customerService: CustomerService) {}
+	constructor(private readonly customerService: CustomerService) {}
 
-  @Get()
-  findAll(): object {
-    return this.customerService.findAll();
-  }
+	@Get()
+	findAll(): object {
+		return this.customerService.findAll();
+	}
 
-  @Post()
-  create(@Body() customerData: any) {
-    return this.customerService.create(customerData)
-  }
+	@Post()
+	create(@Body() customerData: any) {
+		return this.customerService.create(customerData);
+	}
 }
