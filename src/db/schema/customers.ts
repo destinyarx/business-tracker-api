@@ -7,11 +7,12 @@ export const customers = pgTable('customers', {
     firstName: varchar("first_name", { length: 50 }),
     middleName: varchar('middle_name', { length: 50 }),
     lastName: varchar('last_name', { length: 50 }),
+    email: varchar({ length: 50 }),
     gender: varchar({ length: 10 }).notNull(),
     contactNumber: varchar('contact_number', { length: 20 }),
     status: varchar({ length: 30 }),
-    // createdBy: varchar("supabase_id", { length: 100 }).references(() => users.supabaseId),
 
+    // createdBy: varchar("supabase_id", { length: 100 }).references(() => users.id),
     createdAt: timestamp('created_at', { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedAt: timestamp('updated_at', { mode: 'string' }),
     deletedAt: timestamp('deleted_at', { mode: 'string' }),
