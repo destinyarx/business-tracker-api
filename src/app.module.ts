@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { ClerkAuthGuard } from './auth/clerk-auth.guard';
-
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,6 +14,10 @@ import { CustomerModule } from './customer/customer.module';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{
+      ttl: 30, 
+      limit: 2,
+    }]),
     JwtModule.register({}),
     ProductModule, 
     TransactionModule, 
@@ -22,10 +27,14 @@ import { CustomerModule } from './customer/customer.module';
   controllers: [AppController],
   providers: [
     AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ClerkAuthGuard,
+    // },
     {
       provide: APP_GUARD,
-      useClass: ClerkAuthGuard,
-    },
+      useClass: ThrottlerGuard,
+    }
   ],
 })
 export class AppModule {}
