@@ -11,9 +11,14 @@ import { ProductModule } from './product/product.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { CustomerModule } from './customer/customer.module';
+import { ScheduleModule } from '@nestjs/schedule';
+// import { SchedulerService } from './scheduler/scheduler.service';
+import { AppointmentModule } from './appointment/appointment.module';
+import { ServiceModule } from './service/service.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([{
       ttl: 30, 
       limit: 2,
@@ -22,7 +27,7 @@ import { CustomerModule } from './customer/customer.module';
     ProductModule, 
     TransactionModule, 
     ExpensesModule, 
-    CustomerModule
+    CustomerModule, AppointmentModule, ServiceModule, 
   ],
   controllers: [AppController],
   providers: [
@@ -34,7 +39,8 @@ import { CustomerModule } from './customer/customer.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
-    }
+    },
+    // SchedulerService // uncomment this if u need schedule jobs
   ],
 })
 export class AppModule {}
