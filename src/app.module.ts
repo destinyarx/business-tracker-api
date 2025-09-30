@@ -15,6 +15,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 // import { SchedulerService } from './scheduler/scheduler.service';
 import { AppointmentModule } from './appointment/appointment.module';
 import { ServiceModule } from './service/service.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { ServiceModule } from './service/service.module';
     ProductModule, 
     TransactionModule, 
     ExpensesModule, 
-    CustomerModule, AppointmentModule, ServiceModule, 
+    CustomerModule, AppointmentModule, ServiceModule, EmailModule, 
   ],
   controllers: [AppController],
   providers: [
