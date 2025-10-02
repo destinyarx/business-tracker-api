@@ -1,6 +1,6 @@
 import { isNull, eq } from 'drizzle-orm';
 import { db } from '../index';
-import type { CustomerColumn } from '../schema/customers';
+import type { Customer } from '../schema/customers';
 import { customers } from '../schema/customers';
 
 export async function getAllCustomers() {
@@ -17,14 +17,14 @@ export async function getCustomer(id: number) {
       .where(eq(customers.id, id));
 }
 
-export async function addCustomer(customerData: CustomerColumn) {
+export async function addCustomer(customerData: Customer) {
     return await db
         .insert(customers)
         .values(customerData)
         .returning({ insertedId: customers.id });
 };
 
-export async function updateCustomer(id: number, data: Partial<CustomerColumn>) {
+export async function updateCustomer(id: number, data: Partial<Customer>) {    
     return await db
         .update(customers)
         .set(data)
@@ -39,13 +39,8 @@ export async function deleteCustomer(id: number) {
         .returning();
 }
 
-export async function findCustomersPaginated(limit: number, offset: number, user: number) 
+export async function findCustomersPaginated(limit: number, offset: number) 
 {
-    console.log('limit: ')
-    console.log(limit)
-    console.log('offset: ')
-    console.log(typeof offset)
-
     return await db
         .select()
         .from(customers)

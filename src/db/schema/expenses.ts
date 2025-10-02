@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, text, timestamp, decimal, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, text, integer, timestamp, decimal, pgEnum } from 'drizzle-orm/pg-core';
 import { users } from '../schema/users'
 
 // Enum for expense categories
@@ -29,8 +29,11 @@ export const expenses = pgTable('expenses', {
     amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
     category: expenseCategoryEnum('category').notNull(),
     paymentMethod: paymentMethodEnum('payment_method').default('cash'),
-    createdBy: varchar("created_by", { length: 100 }).references(() => users.id),
+
+    createdBy: varchar('created_by', { length: 100 }).references(() => users.clerkId),
     dateIncurred: timestamp('date_incurred').defaultNow(),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+export type Expenses = typeof expenses.$inferInsert;

@@ -9,7 +9,8 @@ export class CustomerService {
     try {
       return await addCustomer(createCustomerDto);
     } catch (error) {
-      throw new BadRequestException(error?.message || 'Failed to fetch customers');
+      const message = error instanceof Error ? error.message : 'Failed to create user';
+      throw new BadRequestException(message);
     }
   }
 
@@ -17,7 +18,8 @@ export class CustomerService {
     try {
       return await getAllCustomers();
     } catch (error) {
-      throw new BadRequestException(error?.message || 'Failed to add customer');
+      const message = error instanceof Error ? error.message : 'Failed to create user';
+      throw new BadRequestException(message);
     }
 	}
 
@@ -25,7 +27,8 @@ export class CustomerService {
     try {
       return await getCustomer(id);
     } catch (error) {
-      throw new BadRequestException(error?.message || 'Customer does not exist');
+      const message = error instanceof Error ? error.message : 'Failed to create user';
+      throw new BadRequestException(message);
     }
   }
 
@@ -37,7 +40,8 @@ export class CustomerService {
     try {
       return await updateCustomer(id, data);
     } catch (error) {
-      throw new BadRequestException(error?.message || 'Unexpected error occurs.');
+      const message = error instanceof Error ? error.message : 'Failed to create user';
+      throw new BadRequestException(message);
     }
   }
 
@@ -45,16 +49,17 @@ export class CustomerService {
     try {
       return await deleteCustomer(id);
     } catch (error) {
-      throw new BadRequestException(error?.message || 'Customer does not exist.');
+      const message = error instanceof Error ? error.message : 'Failed to create user';
+      throw new BadRequestException(message);
     }
   }
 
-  async findPaginated(limit: number, offset: number, user: number) {
-    console.log(limit, offset, user)
+  async findPaginated(limit: number, offset: number) {
     try {
-      return await findCustomersPaginated(limit, offset, user)
+      return await findCustomersPaginated(limit, offset)
     } catch (error) {
-      throw new BadRequestException(error?.message || 'Customer does not exist.');
+      const message = error instanceof Error ? error.message : 'Failed to create user';
+      throw new BadRequestException(message);
     }
   }
 }
