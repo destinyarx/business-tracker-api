@@ -9,8 +9,8 @@ export const products = pgTable('products', {
     category: varchar({ length: 50 }),
     sku: varchar({ length: 50 }),
     barcode: varchar({ length: 50 }),
-    costPrice: decimal('cost_price', { precision: 10, scale: 2 }).notNull(),
-    basePrice: decimal('base_price', { precision: 10, scale: 2 }),
+    costPrice: decimal('cost_price', { precision: 10, scale: 2, mode: 'number' }).notNull(),
+    basePrice: decimal('base_price', { precision: 10, scale: 2, mode: 'number' }),
     stock: integer().default(0),
     image: varchar({ length: 100 }),
 

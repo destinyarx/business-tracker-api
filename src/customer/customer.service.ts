@@ -15,6 +15,7 @@ export class CustomerService {
   }
 
   async findAll() {
+    console.log('findAll')
     try {
       return await getAllCustomers();
     } catch (error) {
@@ -24,6 +25,7 @@ export class CustomerService {
 	}
 
   async findOne(id: number) {
+    console.log('findOne')
     try {
       return await getCustomer(id);
     } catch (error) {
@@ -55,6 +57,7 @@ export class CustomerService {
   }
 
   async findPaginated(limit: number, offset: number) {
+    console.log('findPaginated')
     try {
       return await findCustomersPaginated(limit, offset)
     } catch (error) {

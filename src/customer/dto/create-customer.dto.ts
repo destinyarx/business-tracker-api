@@ -1,5 +1,4 @@
 import { IsEmail, IsEnum, IsString, Length, Matches } from 'class-validator';
-import { PartialType } from '@nestjs/mapped-types';
 
 enum Gender {
     Male = 'M',
