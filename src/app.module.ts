@@ -7,7 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { JwtModule } from '@nestjs/jwt';
-// import { ClerkAuthGuard } from './auth/clerk-auth.guard';
+import { ClerkAuthGuard } from './auth/clerk-auth.guard';
 // import { SchedulerService } from './scheduler/scheduler.service';
 
 import { CacheModule } from '@nestjs/cache-manager';
@@ -19,7 +19,6 @@ import { CustomerModule } from './customer/customer.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppointmentModule } from './appointment/appointment.module';
 import { ServiceModule } from './service/service.module';
-import { UserModule } from './user/user.module';
 import { ProductModule } from './product/product.module';
 import { EmailModule } from './email/email.module';
 import { ChatgptModule } from './chatgpt/chatgpt.module';
@@ -43,17 +42,16 @@ import { ChatgptModule } from './chatgpt/chatgpt.module';
     AppointmentModule, 
     ServiceModule, 
     EmailModule, 
-    UserModule, 
     ChatgptModule, 
     ProductModule, 
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: ClerkAuthGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: ClerkAuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
