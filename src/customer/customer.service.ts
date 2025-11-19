@@ -56,10 +56,10 @@ export class CustomerService {
     }
   }
 
-  async findPaginated(limit: number, offset: number) {
+  async findPaginated(user: string, limit: number, offset: number) {
     console.log('findPaginated')
     try {
-      return await findCustomersPaginated(limit, offset)
+      return await findCustomersPaginated(user, limit, offset)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to create user';
       throw new BadRequestException(message);

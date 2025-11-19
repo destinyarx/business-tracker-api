@@ -1,25 +1,12 @@
-import { IsEnum, IsString, IsNumber } from 'class-validator';
- 
-enum ProductCategory {
-    FOOD = "Food",
-    BEVERAGES = "Beverages",
-    GROCERY = "Grocery",
-    ELECTRONICS = "Electronics",
-    CLOTHING = "Clothing",
-    HEALTH_BEAUTY = "Health & Beauty",
-    HOME_APPLIANCES = "Home Appliances",
-    FURNITURE = "Furniture",
-    TOYS = "Toys",
-    STATIONERY = "Stationery",
-    HARDWARE = "Hardware",
-    AUTOMOTIVE = "Automotive",
-    SERVICES = "Services",
-}
+import { IsEnum, IsString, IsNumber, IsOptional } from 'class-validator';
+import { ProductCategory } from 'src/common/constants'
+
   
 export class CreateProductDto {
     @IsString()
-    name: string
+    title: string
 
+    @IsOptional()
     @IsString()
     description: string
 
@@ -28,21 +15,29 @@ export class CreateProductDto {
     })
     category: ProductCategory
 
+    @IsOptional()
     @IsString()
     sku: string
 
+    @IsOptional()
+    @IsString()
+    supplier: string
+
+    @IsOptional()
     @IsString()
     barcode: string
 
     @IsNumber()
-    basePrice: number
+    price: number
 
+    @IsOptional()
     @IsNumber()
-    costPrice: number
+    profit: number
 
     @IsNumber()
     stock: number
 
+    @IsOptional()
     @IsString()
     image: string
 

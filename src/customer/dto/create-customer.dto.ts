@@ -16,6 +16,9 @@ export class CreateCustomerDto {
     alias: string;
 
     @IsString()
+    fullName: string;
+
+    @IsString()
     firstName: string;
 
     @IsString()
@@ -36,6 +39,9 @@ export class CreateCustomerDto {
 
     @IsEmail()
     email: string;
+
+    @IsString()
+    createdBy: string;
 
     @IsString()
     @Length(11, 11, { message: 'Phone number must be exactly 11 digits' })

@@ -21,10 +21,11 @@ export class CustomerController {
 
   @Get('paginated')
   findPaginated(
+    @Query('user') user: string,
     @Query('limit', ParseIntPipe) limit: number,
     @Query('offset', ParseIntPipe) offset: number,
   ) {
-    return this.customerService.findPaginated(limit, offset);
+    return this.customerService.findPaginated(user, limit, offset);
   }
 
   @Get(':id')

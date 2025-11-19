@@ -40,6 +40,7 @@ export class ProductController {
     @Query('limit', ParseIntPipe) limit: number,
     @Query('offset', ParseIntPipe) offset: number,
   ) {
-    return this.productService.findPaginated(limit, offset);
+    return 'PRODUCTS'
+    // return this.productService.findPaginated(limit, offset);
   }
 }

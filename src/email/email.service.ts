@@ -25,4 +25,5 @@ export class EmailService {
     });
     console.log('Email sent: ', info.messageId);
   }
+
 }

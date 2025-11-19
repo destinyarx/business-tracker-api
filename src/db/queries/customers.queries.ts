@@ -39,11 +39,23 @@ export async function deleteCustomer(id: number) {
         .returning();
 }
 
-export async function findCustomersPaginated(limit: number, offset: number) 
+export async function findCustomersPaginated(user: string, limit: number, offset: number) 
 {
-    return await db
+    let hasNext = false
+
+    const results = await db
         .select()
         .from(customers)
-        .limit(limit)
+        .where(eq(customers.createdBy, user))
+        .limit(limit+1)
         .offset(offset);
+
+    if (results.length > limit) hasNext = true
+
+    results.pop()
+
+    return {
+        results,
+        hasNext
+    }
 }

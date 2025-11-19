@@ -1,5 +1,4 @@
-import { pgTable, serial, varchar, text, integer, timestamp, decimal, pgEnum } from 'drizzle-orm/pg-core';
-import { users } from '../schema/users'
+import { pgTable, serial, varchar, text, timestamp, decimal, pgEnum } from 'drizzle-orm/pg-core';
 
 // Enum for expense categories
 export const expenseCategoryEnum = pgEnum('expense_category', [
@@ -30,7 +29,7 @@ export const expenses = pgTable('expenses', {
     category: expenseCategoryEnum('category').notNull(),
     paymentMethod: paymentMethodEnum('payment_method').default('cash'),
 
-    createdBy: varchar('created_by', { length: 100 }).references(() => users.clerkId),
+    createdBy: varchar('created_by', { length: 100 }),
     dateIncurred: timestamp('date_incurred').defaultNow(),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),

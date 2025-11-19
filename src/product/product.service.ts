@@ -51,9 +51,9 @@ export class ProductService {
     }
   }
 
-  async findPaginated(limit: number, offset: number) {
+  async findPaginated(limit: number, offset: number, searchTerm: string|null, filter: string|null) {
     try {
-      return await getProductsPaginated(limit, offset)
+      return await getProductsPaginated(limit, offset, searchTerm, filter)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';
       throw new BadRequestException(message);
