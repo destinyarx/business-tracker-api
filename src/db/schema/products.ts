@@ -16,8 +16,8 @@ export const products = pgTable('products', {
 
     createdBy: varchar('created_by', { length: 100 }),
     createdAt: timestamp('created_at', { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+    updatedBy: varchar('updated_by', { length: 100 }),
     updatedAt: timestamp('updated_at', { mode: 'string' }),
-    deletedAt: timestamp('deleted_at', { mode: 'string' }),
 });
 
 export type Product = typeof products.$inferInsert;

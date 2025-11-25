@@ -5,18 +5,18 @@ import { getAllProducts, getProduct, addProduct, updateProduct, deleteProduct, g
 
 @Injectable()
 export class ProductService {
-  create(createProductDto: CreateProductDto) {
+  create(createProductDto: CreateProductDto, userId: string) {
     try {
-      return addProduct(createProductDto);
+      return addProduct(createProductDto, userId);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';
       throw new BadRequestException(message);
     }
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     try {
-      return await getAllProducts()
+      return await getAllProducts(userId)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';
       throw new BadRequestException(message);
@@ -32,9 +32,9 @@ export class ProductService {
     }
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  async update(id: number, updateProductDto: UpdateProductDto, userId: string) {
     try {
-      return await updateProduct(id, updateProductDto);
+      return await updateProduct(id, updateProductDto, userId);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';
       throw new BadRequestException(message);

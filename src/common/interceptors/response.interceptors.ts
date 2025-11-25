@@ -1,29 +1,56 @@
-// common/interceptors/response.interceptor.ts
 import {
-    Injectable,
-    NestInterceptor,
-    ExecutionContext,
     CallHandler,
-} from '@nestjs/common';
-
-import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-
-@Injectable()
-export class ResponseInterceptor implements NestInterceptor {
-    intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        const ctx = context.switchToHttp();
-        const request = ctx.getRequest<Request>();
-
-        return next.handle().pipe(
-            map((data) => ({
-                statusCode: context.switchToHttp().getResponse().statusCode,
-                message: data?.message || 'Success',
-                data: data,
-                timestamp: new Date().toISOString(),
-                path: request.url,
-            })),
-        );
+    ExecutionContext,
+    Injectable,
+    NestInterceptor
+  } from '@nestjs/common'
+  import { Observable } from 'rxjs'
+  import { map } from 'rxjs/operators'
+  
+  export interface ApiResponse<T> {
+    statusCode: number
+    message: string
+    data: T
+    timestamp: string
+    path: string
+  }
+  
+  export interface ControllerResponse<T> {
+    data?: T
+    message?: string
+  }
+  
+  @Injectable()
+  export class ResponseInterceptor<T>
+    implements NestInterceptor<T, ApiResponse<T>>
+  {
+    intercept(
+      context: ExecutionContext,
+      next: CallHandler
+    ): Observable<ApiResponse<T>> {
+      const http = context.switchToHttp()
+      const request = http.getRequest()
+      const response = http.getResponse()
+  
+      return next.handle().pipe(
+        map((data: T | ControllerResponse<T>) => {
+          const isWrapped =
+            typeof data === 'object' &&
+            data !== null &&
+            ('data' in data || 'message' in data)
+  
+          const extractedData = isWrapped ? data.data ?? (data as T) : (data as T)
+          const message = isWrapped ? data.message ?? 'Success' : 'Success'
+  
+          return {
+            statusCode: response?.statusCode ,
+            message,
+            data: extractedData,
+            timestamp: new Date().toISOString(),
+            path: request.url
+          }
+        })
+      )
     }
-}
+  }
   

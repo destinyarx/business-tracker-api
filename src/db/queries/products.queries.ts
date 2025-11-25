@@ -1,13 +1,28 @@
 import { db } from '../index';
-import { isNull, eq, or, ilike, and } from 'drizzle-orm';
+import { eq, desc, or, ilike, and } from 'drizzle-orm';
 import type { Product } from '../schema/products'
 import { products } from '../schema/products'
 
-export async function getAllProducts() {
-    return await db
-      .select()
-      .from(products)
-      .where(isNull(products.deletedAt));
+export async function getAllProducts(userId, searchTerm?: string, filter?: string) {
+  return await db
+    .select()
+    .from(products)
+    .where(
+      and(
+        eq(products.createdBy, userId),
+        filter ? eq(products.category, filter) : undefined,
+
+        searchTerm ? 
+          or(
+            ilike(products.title, `%${searchTerm}%`),
+            ilike(products.category, `%${searchTerm}%`),
+            ilike(products.sku, `%${searchTerm}%`),
+            ilike(products.supplier, `%${searchTerm}%`),
+          )
+        : undefined
+      )
+    )
+    .orderBy(desc(products.createdAt))
 };
 
 export async function getProduct(id: number) {
@@ -17,17 +32,28 @@ export async function getProduct(id: number) {
       .where(eq(products.id, id));
 }
 
-export async function addProduct(productData: Product) {
-    return await db
-        .insert(products)
-        .values(productData)
-        .returning({ insertedId: products.id });
+export async function addProduct(productData: Product, userId: string) {
+  delete productData.id
+
+  return await db
+      .insert(products)
+      .values({
+        ...productData,
+        createdBy: userId
+      })
+      .returning({ insertedId: products.id });
 };
 
-export async function updateProduct(id: number, data: Partial<Product>) {    
+export async function updateProduct(id: number, data: Partial<Product>, userId: string) { 
+  console.log(new Date().toDateString())
+
     return await db
         .update(products)
-        .set(data)
+        .set({
+          ...data,
+          updatedAt: new Date().toISOString(),
+          updatedBy: userId,
+        })
         .where(eq(products.id, id))
         .returning();
 }
@@ -45,33 +71,23 @@ export async function getProductsPaginated(
   searchTerm: string | null,
   filter: string | null,      
 ) {
-  // const conditions = [];
+  return await db
+    .select()
+    .from(products)
+    .where(
+      and(
+        filter ? eq(products.category, filter) : undefined,
 
-  // if (searchTerm) {
-  //   const term = `%${searchTerm}%`;
-  //   conditions.push(
-  //     or(
-  //       ilike(products.name, term),
-  //       ilike(products.sku, term),
-  //       ilike(products.barcode, term),
-  //     )
-  //   );
-  // }
-
-  // if (filter) {
-  //   conditions.push(ilike(products.category, `%${filter}%`));
-  // }
-
-  // // Compose the main query
-  // let query = db
-  //   .select()
-  //   .from(products)
-  //   .limit(limit)
-  //   .offset(offset);
-
-  // if (conditions.length > 0) {
-  //   query = query.where(and(...conditions));
-  // }
-
-  // return await query;
+        searchTerm ? 
+        or(
+          ilike(products.title, `%${searchTerm}%`),
+          ilike(products.category, `%${searchTerm}%`),
+          ilike(products.sku, `%${searchTerm}%`),
+          ilike(products.supplier, `%${searchTerm}%`),
+        )
+        : undefined
+      )
+    )
+    .limit(limit)
+    .offset(offset)
 }

@@ -3,31 +3,42 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { UserId } from '../common/decorators/user-id.decorator'
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  create(
+    @UserId() userId: string, 
+    @Body() createProductDto: CreateProductDto
+  ) {
+    return this.productService.create(createProductDto, userId);
   }
 
   @Get()
   @UseInterceptors(CacheInterceptor)
-  findAll() {
-    return this.productService.findAll();
+  findAll(@UserId() userId: string) {
+    return this.productService.findAll(userId);
   }
 
   @Get(':id')
   @UseInterceptors(CacheInterceptor)
-  findOne(@Param('id') id: string) {
+  findOne(
+    @UserId() userId: string,
+    @Param('id') id: string
+  ) {
     return this.productService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  update(
+    @UserId() userId: string,
+    @Param('id') id: string, 
+    @Body() updateProductDto: UpdateProductDto
+  ) {
+    return this.productService.update(+id, updateProductDto, userId);
   }
 
   @Delete(':id')
