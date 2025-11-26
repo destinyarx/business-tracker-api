@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe, UseInterceptors } from '@nestjs/common';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { UserCacheInterceptor } from '../common/interceptors/user-cache.interceptor'
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -18,13 +18,13 @@ export class ProductController {
   }
 
   @Get()
-  @UseInterceptors(CacheInterceptor)
+  @UseInterceptors(UserCacheInterceptor)
   findAll(@UserId() userId: string) {
     return this.productService.findAll(userId);
   }
 
   @Get(':id')
-  @UseInterceptors(CacheInterceptor)
+  @UseInterceptors(UserCacheInterceptor)
   findOne(
     @UserId() userId: string,
     @Param('id') id: string
@@ -42,8 +42,11 @@ export class ProductController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+  remove(
+    @UserId() userId: string,
+    @Param('id') id: string
+  ) {
+    return this.productService.remove(+id, userId);
   }
 
   @Get('paginated')
