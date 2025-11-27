@@ -9,13 +9,6 @@ export class UserCacheInterceptor extends CacheInterceptor {
     const method = req.method;
     const path = req.route?.path;
 
-    // console.log('CACHE TRACK BY:', { 
-    //   timestamp: new Date().toISOString(),
-    //   method, 
-    //   path, 
-    //   userId 
-    // })
-
     // Only cache GET
     if (method !== 'GET') return undefined;
 
@@ -23,7 +16,7 @@ export class UserCacheInterceptor extends CacheInterceptor {
     if (!userId) return undefined;
 
     // Build universal cache key for ALL endpoints
-    const key = `${userId}:${method}:${path}`;
+    const key = `${userId}:${path}`;
 
     // Optional debug
     console.log('CACHE KEY:', key);

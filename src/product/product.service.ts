@@ -14,7 +14,7 @@ export class ProductService {
   async create(createProductDto: CreateProductDto, userId: string) {
     try {
       const insertedId = await addProduct(createProductDto, userId);
-      await this.cacheManager.del(`products:${userId}`);
+      await this.cacheManager.del(`${userId}:/products`)
       return insertedId
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';
@@ -43,23 +43,23 @@ export class ProductService {
 
   async update(id: number, updateProductDto: UpdateProductDto, userId: string) {
     try {
-      const update = await updateProduct(id, updateProductDto, userId);
-      await this.cacheManager.del(`products:${userId}`);
+      const update = await updateProduct(id, updateProductDto, userId)
+      await this.cacheManager.del(`${userId}:/products`)
       return update
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unexpected error occurs';
-      throw new BadRequestException(message);
+      const message = error instanceof Error ? error.message : 'Unexpected error occurs'
+      throw new BadRequestException(message)
     }
   }
 
   async remove(id: number, userId: string) {
     try {
       const deleted = await deleteProduct(id);
-      await this.cacheManager.del(`products:${userId}`);
+      await this.cacheManager.del(`${userId}:/products`)
       return deleted
       
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Product does not exist';
+      const message = error instanceof Error ? error.message : 'Product does not exist'
       throw new BadRequestException(message);
     }
   }
@@ -68,8 +68,8 @@ export class ProductService {
     try {
       return await getProductsPaginated(limit, offset, searchTerm, filter)
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unexpected error occurs';
-      throw new BadRequestException(message);
+      const message = error instanceof Error ? error.message : 'Unexpected error occurs'
+      throw new BadRequestException(message)
     }
   }
 }
