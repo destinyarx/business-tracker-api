@@ -22,6 +22,7 @@ import { ServiceModule } from './service/service.module';
 import { ProductModule } from './product/product.module';
 import { EmailModule } from './email/email.module';
 import { ChatgptModule } from './chatgpt/chatgpt.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -43,15 +44,15 @@ import { ChatgptModule } from './chatgpt/chatgpt.module';
     ServiceModule, 
     EmailModule, 
     ChatgptModule, 
-    ProductModule, 
+    ProductModule, OrdersModule, 
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ClerkAuthGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ClerkAuthGuard,
+    // },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

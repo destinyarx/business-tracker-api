@@ -1,10 +1,10 @@
-import { pgTable,  timestamp, varchar, serial } from "drizzle-orm/pg-core"
-import { sql } from 'drizzle-orm';
+import { pgTable,  timestamp, varchar, serial } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 
 export const customers = pgTable('customers', {
     id: serial('id').primaryKey().notNull(),
-    alias: varchar("alias", { length: 50 }),
-    fullName: varchar("full_name", { length: 50 }),
+    alias: varchar('alias', { length: 50 }),
+    fullName: varchar('full_name', { length: 100 }),
     email: varchar({ length: 50 }),
     gender: varchar({ length: 10 }).notNull(),
     contactNumber: varchar('contact_number', { length: 20 }),
@@ -12,8 +12,9 @@ export const customers = pgTable('customers', {
     
     createdBy: varchar('created_by', { length: 100 }),
     createdAt: timestamp('created_at', { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+    updatedBy: varchar('updated_by', { length: 100 }),
     updatedAt: timestamp('updated_at', { mode: 'string' }),
     deletedAt: timestamp('deleted_at', { mode: 'string' }),
-});
+})
 
-export type Customer = typeof customers.$inferInsert;
+export type Customer = typeof customers.$inferInsert

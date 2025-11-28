@@ -41,12 +41,10 @@ export async function addProduct(productData: Product, userId: string) {
         ...productData,
         createdBy: userId
       })
-      .returning({ insertedId: products.id });
+      .returning({ id: products.id });
 };
 
 export async function updateProduct(id: number, data: Partial<Product>, userId: string) { 
-  console.log(new Date().toDateString())
-
     return await db
         .update(products)
         .set({
@@ -55,14 +53,14 @@ export async function updateProduct(id: number, data: Partial<Product>, userId: 
           updatedBy: userId,
         })
         .where(eq(products.id, id))
-        .returning();
+        .returning({ id: products.id });
 }
 
 export async function deleteProduct(id: number) {
     return await db
         .delete(products)
         .where(eq(products.id, id))
-        .returning();
+        .returning({ id: products.id });
 }
 
 export async function getProductsPaginated(

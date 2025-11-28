@@ -1,6 +1,5 @@
 import { pgTable, serial, varchar, text, timestamp, decimal, pgEnum } from 'drizzle-orm/pg-core';
 
-// Enum for expense categories
 export const expenseCategoryEnum = pgEnum('expense_category', [
     'rent',
     'utilities',
@@ -11,7 +10,6 @@ export const expenseCategoryEnum = pgEnum('expense_category', [
     'other',
 ]);
 
-// Enum for payment methods
 export const paymentMethodEnum = pgEnum('payment_method', [
     'cash',
     'e_wallet',
@@ -33,6 +31,7 @@ export const expenses = pgTable('expenses', {
     dateIncurred: timestamp('date_incurred').defaultNow(),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
+    deletedAt: timestamp('deleted_at').defaultNow(),
 });
 
 export type Expenses = typeof expenses.$inferInsert;
