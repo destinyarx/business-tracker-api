@@ -1,7 +1,6 @@
 import { IsEnum, IsString, IsNumber, IsOptional } from 'class-validator';
 import { ProductCategory } from 'src/common/constants'
 
-  
 export class CreateProductDto {
     @IsString()
     title: string
@@ -40,7 +39,4 @@ export class CreateProductDto {
     @IsOptional()
     @IsString()
     image: string
-
-    @IsString()
-    createdBy: string
 }

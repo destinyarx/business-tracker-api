@@ -7,7 +7,7 @@ export const orderStatusEnum = pgEnum('order_status', ['pending', 'in_progress',
 
 export const orders = pgTable('orders', {
     id: serial('id').primaryKey().notNull(),
-    userId: integer('user_id').references(() => customers.id, {
+    customerId: integer('customer_id').references(() => customers.id, {
         onDelete: 'set null'
     }),
     orderName: varchar('order_name', { length: 50 }),
@@ -21,14 +21,14 @@ export const orders = pgTable('orders', {
     deletedAt: timestamp('deleted_at', { mode: 'string' }),
 }, (table) => {
     return {
-        userIdIdx: index('orders_user_id_idx').on(table.userId)
+        customerIdIdx: index('orders_user_id_idx').on(table.customerId)
     }
 })
 
 export const ordersRelations = relations(orders, ({ many, one }) => ({
     items: many(orderItems),
     customer: one(customers, {
-        fields: [orders.userId],
+        fields: [orders.customerId],
         references: [customers.id]
     })
 }))

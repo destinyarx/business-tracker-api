@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { UserId } from '../common/decorators/user-id.decorator'
+import { UserCacheInterceptor } from '../common/interceptors/user-cache.interceptor'
+
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(createOrderDto);
+  create(@UserId() userId: string, @Body() createOrderDto: CreateOrderDto) {
+    return this.ordersService.create(userId, createOrderDto);
   }
 
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  @UseInterceptors(UserCacheInterceptor)
+  findAll(@UserId() userId: string) {
+    return this.ordersService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
+  findOne(@UserId() userId: string, @Param('id') id: string) {
+    return this.ordersService.findOne(+id, userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+  update(@UserId() userId: string, @Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+    return this.ordersService.update(+id, userId, updateOrderDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id);
+    return this.ordersService.remove(+id,);
   }
 }

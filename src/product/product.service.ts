@@ -1,4 +1,4 @@
-import { Injectable,BadRequestException, Inject } from '@nestjs/common';
+import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -24,7 +24,6 @@ export class ProductService {
 
   async findAll(userId: string) {
     try {
-      console.log('AYOWN gumana')
       return await getAllProducts(userId)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';

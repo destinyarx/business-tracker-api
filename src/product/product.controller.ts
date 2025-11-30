@@ -24,7 +24,6 @@ export class ProductController {
   }
 
   @Get(':id')
-  @UseInterceptors(UserCacheInterceptor)
   findOne(
     @UserId() userId: string,
     @Param('id') id: string
