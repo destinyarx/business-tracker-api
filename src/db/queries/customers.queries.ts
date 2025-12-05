@@ -1,13 +1,18 @@
-import { isNull, eq } from 'drizzle-orm';
+import { isNull, eq, and } from 'drizzle-orm';
 import { db } from '../index';
 import type { Customer } from '../schema/customers';
 import { customers } from '../schema/customers';
 
-export async function getAllCustomers() {
+export async function getAllCustomers(userId: string) {
     return await db
-      .select()
-      .from(customers)
-      .where(isNull(customers.deletedAt));
+        .select()
+        .from(customers)
+        .where(
+            and(
+                isNull(customers.deletedAt),
+                eq(customers.createdBy, userId)
+            )
+        );
 };
 
 export async function getCustomer(id: number) {

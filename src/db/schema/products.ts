@@ -1,5 +1,6 @@
 import { pgTable,  timestamp, varchar, serial, decimal, integer } from "drizzle-orm/pg-core"
-import { sql } from 'drizzle-orm';
+import { sql, relations } from 'drizzle-orm';
+import { productVariants } from './product_variants'
 
 export const products = pgTable('products', {
     id: serial('id').primaryKey().notNull(),
@@ -19,5 +20,9 @@ export const products = pgTable('products', {
     updatedBy: varchar('updated_by', { length: 100 }),
     updatedAt: timestamp('updated_at', { mode: 'string' }),
 });
+
+export const productRelations = relations(productVariants, ({ many }) => ({
+    variants: many(productVariants)
+}))
 
 export type Product = typeof products.$inferInsert;
