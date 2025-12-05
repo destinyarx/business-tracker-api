@@ -14,10 +14,10 @@ export class CustomerService {
     }
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     console.log('findAll')
     try {
-      return await getAllCustomers();
+      return await getAllCustomers(userId);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to create user';
       throw new BadRequestException(message);

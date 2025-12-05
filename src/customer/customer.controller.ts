@@ -3,6 +3,7 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { UserId } from '../common/decorators/user-id.decorator'
 
 @Controller('customers')
 export class CustomerController {
@@ -15,8 +16,8 @@ export class CustomerController {
 
   @Get()
   @UseInterceptors(CacheInterceptor)
-  findAll() {
-    return this.customerService.findAll();
+  findAll(@UserId() userId: string) {
+    return this.customerService.findAll(userId);
   }
 
   @Get('paginated')
