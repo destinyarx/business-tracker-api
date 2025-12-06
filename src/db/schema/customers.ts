@@ -8,7 +8,7 @@ export const customers = pgTable('customers', {
     gender: varchar({ length: 10 }),
     email: varchar({ length: 50 }),
     customerType: varchar('customer_type', { length: 20 }),
-    phone: varchar('contact_number', { length: 20 }),
+    phone: varchar({ length: 20 }),
     status: varchar({ length: 30 }),
     notes: varchar({ length: 50 }),
     
