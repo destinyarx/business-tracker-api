@@ -10,8 +10,8 @@ export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
   @Post()
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customerService.create(createCustomerDto);
+  create(@UserId() userId: string, @Body() createCustomerDto: CreateCustomerDto) {
+    return this.customerService.create(userId, createCustomerDto);
   }
 
   @Get()

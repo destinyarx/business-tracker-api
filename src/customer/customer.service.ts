@@ -11,9 +11,9 @@ export class CustomerService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async create(createCustomerDto: CreateCustomerDto) {
+  async create(userId: string, createCustomerDto: CreateCustomerDto) {
     try {
-      return await addCustomer(createCustomerDto);
+      return await addCustomer(userId, createCustomerDto);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to create user';
       throw new BadRequestException(message);
