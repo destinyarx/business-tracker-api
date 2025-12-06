@@ -36,12 +36,12 @@ export class CustomerController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
-    return this.customerService.update(+id, updateCustomerDto);
+  update(@UserId() userId: string, @Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
+    return this.customerService.update(+id, updateCustomerDto, userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.customerService.remove(+id);
+  remove(@UserId() userId: string, @Param('id') id: string) {
+    return this.customerService.remove(+id, userId);
   }
 }

@@ -1,10 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Inject } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { getAllCustomers, getCustomer, addCustomer, updateCustomer, deleteCustomer, findCustomersPaginated } from '../db/queries/customers.queries'
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class CustomerService {
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
+
   async create(createCustomerDto: CreateCustomerDto) {
     try {
       return await addCustomer(createCustomerDto);
@@ -34,7 +40,7 @@ export class CustomerService {
     }
   }
 
-  async update(id: number, updateCustomerDto: UpdateCustomerDto) {
+  async update(id: number, updateCustomerDto: UpdateCustomerDto, userId: string) {
     const data = Object.fromEntries(
       Object.entries(updateCustomerDto).filter(([_, value]) => value !== undefined),
     );
@@ -42,16 +48,18 @@ export class CustomerService {
     try {
       return await updateCustomer(id, data);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to create user';
+      const message = error instanceof Error ? error.message : 'Failed to update customer';
       throw new BadRequestException(message);
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number, userId: string) {
     try {
-      return await deleteCustomer(id);
+      await deleteCustomer(id);
+      await this.cacheManager.del(`${userId}:/products`)
+      return true
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to create user';
+      const message = error instanceof Error ? error.message : 'Failed to delete customer';
       throw new BadRequestException(message);
     }
   }
@@ -61,7 +69,7 @@ export class CustomerService {
     try {
       return await findCustomersPaginated(user, limit, offset)
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to create user';
+      const message = error instanceof Error ? error.message : 'Unexpected error occured';
       throw new BadRequestException(message);
     }
   }
