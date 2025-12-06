@@ -43,12 +43,8 @@ export class CustomerService {
   }
 
   async update(id: number, updateCustomerDto: UpdateCustomerDto, userId: string) {
-    const data = Object.fromEntries(
-      Object.entries(updateCustomerDto).filter(([_, value]) => value !== undefined),
-    );
-
     try {
-      const update = await updateCustomer(id, data);
+      const update = await updateCustomer(id, updateCustomerDto);
       await this.cacheManager.del(`${userId}:/customers`)
       return update
     } catch (error) {
