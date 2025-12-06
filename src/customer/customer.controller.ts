@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe, UseInterceptors } from '@nestjs/common';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { UserCacheInterceptor } from '../common/interceptors/user-cache.interceptor'
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -15,7 +15,7 @@ export class CustomerController {
   }
 
   @Get()
-  @UseInterceptors(CacheInterceptor)
+  @UseInterceptors(UserCacheInterceptor)
   findAll(@UserId() userId: string) {
     return this.customerService.findAll(userId);
   }
@@ -30,7 +30,7 @@ export class CustomerController {
   }
 
   @Get(':id')
-  @UseInterceptors(CacheInterceptor)
+  @UseInterceptors(UserCacheInterceptor)
   findOne(@Param('id') id: number) {
     return this.customerService.findOne(id);
   }
