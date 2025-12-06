@@ -13,7 +13,9 @@ export class CustomerService {
 
   async create(userId: string, createCustomerDto: CreateCustomerDto) {
     try {
-      return await addCustomer(userId, createCustomerDto);
+      const insert = await addCustomer(userId, createCustomerDto);
+      await this.cacheManager.del(`${userId}:/customers`)
+      return insert
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to create user';
       throw new BadRequestException(message);
@@ -46,7 +48,9 @@ export class CustomerService {
     );
 
     try {
-      return await updateCustomer(id, data);
+      const update = await updateCustomer(id, data);
+      await this.cacheManager.del(`${userId}:/customers`)
+      return update
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to update customer';
       throw new BadRequestException(message);
@@ -56,7 +60,7 @@ export class CustomerService {
   async remove(id: number, userId: string) {
     try {
       await deleteCustomer(id);
-      await this.cacheManager.del(`${userId}:/products`)
+      await this.cacheManager.del(`${userId}:/customers`)
       return true
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to delete customer';
