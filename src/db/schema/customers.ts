@@ -10,6 +10,7 @@ export const customers = pgTable('customers', {
     customerType: varchar('customer_type', { length: 20 }),
     phone: varchar('contact_number', { length: 20 }),
     status: varchar({ length: 30 }),
+    notes: varchar({ length: 50 }),
     
     createdBy: varchar('created_by', { length: 100 }),
     createdAt: timestamp('created_at', { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),

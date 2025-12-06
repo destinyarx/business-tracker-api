@@ -22,10 +22,13 @@ export async function getCustomer(id: number) {
       .where(eq(customers.id, id));
 }
 
-export async function addCustomer(customerData: Customer) {
+export async function addCustomer(userId: string, customerData: Customer) {
     return await db
         .insert(customers)
-        .values(customerData)
+        .values({
+            ...customerData,
+            createdBy: userId
+        })
         .returning({ insertedId: customers.id });
 };
 
