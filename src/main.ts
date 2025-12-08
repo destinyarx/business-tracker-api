@@ -9,7 +9,7 @@ async function bootstrap() {
 	app.enableCors({
 		origin: [
 			'http://localhost:3000', 
-			'https://business-tracker-eta.vercel.app/',
+			'https://business-tracker-eta.vercel.app',
 			'https://yourfrontend.com',
 		], 
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
