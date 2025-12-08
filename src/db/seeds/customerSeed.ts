@@ -19,7 +19,7 @@ export default async function runSeed() {
         firstName: f.firstName(),
         middleName: f.default({ defaultValue: '' }),
         lastName: f.lastName(),
-        contactNumber: f.phoneNumber(),
+        phone: f.phoneNumber(),
         status: f.valuesFromArray({ values: ["active", "inactive"] }),
         // createdAt, updatedAt, deletedAt will use defaults or generics by seed
       },
@@ -35,7 +35,7 @@ export default async function runSeed() {
         fullName: f.fullName(),
         email: f.email(),
         gender: f.valuesFromArray({ values: ["Male", "Female", "Other"] }),
-        contactNumber: f.phoneNumber(),
+        phone: f.phoneNumber(),
         status: f.valuesFromArray({ values: ["active", "inactive"] }),
         // createdAt, updatedAt, deletedAt are handled by default or generic
       },
