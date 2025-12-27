@@ -21,7 +21,8 @@ export class ChatgptService {
       ],
     });
 
-    
+    // testing if github action will trigger 
+
     return response.choices[0].message.content || '';
   }
 }
