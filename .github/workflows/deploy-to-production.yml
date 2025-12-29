@@ -48,9 +48,11 @@ jobs:
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+           echo "Connected successfully"
+            whoami
             echo "Pulling latest image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/business-tracker-api:latest
 
