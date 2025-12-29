@@ -40,3 +40,5 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/business-tracker-api:${{ steps.version.outputs.version }}
             ${{ secrets.DOCKER_USERNAME }}/business-tracker-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

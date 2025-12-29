@@ -49,14 +49,14 @@ import { OrdersModule } from './orders/orders.module';
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ClerkAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ClerkAuthGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
     // SchedulerService, // uncomment this if u need schedule jobs
   ],
 })
