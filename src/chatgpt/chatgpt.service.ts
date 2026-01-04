@@ -15,6 +15,7 @@ export class ChatgptService {
   
   
   // test github action
+  // 1
   async getChatResponse(prompt: string): Promise<string> {
     try {
       const response = await this.client.chat.completions.create({
