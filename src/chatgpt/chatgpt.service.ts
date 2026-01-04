@@ -13,12 +13,11 @@ export class ChatgptService {
   }
   
   
-  
   // test github action
   async getChatResponse(prompt: string): Promise<string> {
     try {
       const response = await this.client.chat.completions.create({
-        model: 'openai/gpt-5-nano',
+        model: 'openai/gpt-oss-20b:free',
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', content: prompt },
