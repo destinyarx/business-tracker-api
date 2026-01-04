@@ -63,7 +63,11 @@ jobs:
             echo "Starting new container..."
             docker run -d \
               --name business-tracker-api \
-              --env-file /opt/business-tracker-api.env \
+              -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+              -e SUPABASE_JWT_KEY="${{ secrets.SUPABASE_JWT_KEY }}" \
+              -e REDIS_URL="${{ secrets.REDIS_URL }}" \
+              -e REDIS_TOKEN="${{ secrets.REDIS_TOKEN }}" \
+              -e CACHE_TTL_SECONDS="${{ secrets.CACHE_TTL_SECONDS }}" \
               -p 3003:3000 \
               --restart always \
               ${{ secrets.DOCKER_USERNAME }}/business-tracker-api:latest
