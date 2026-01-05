@@ -66,6 +66,7 @@ jobs:
               -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
               -e SUPABASE_JWT_KEY="${{ secrets.SUPABASE_JWT_KEY }}" \
               -e REDIS_URL="${{ secrets.REDIS_URL }}" \
+              -e OPENROUTER_API_KEY="${{ secrets.OPENROUTER_API_KEY }}" \
               -e REDIS_TOKEN="${{ secrets.REDIS_TOKEN }}" \
               -e CACHE_TTL_SECONDS="${{ secrets.CACHE_TTL_SECONDS }}" \
               -p 3003:3000 \
