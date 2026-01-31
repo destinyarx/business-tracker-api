@@ -5,8 +5,10 @@ export class CreateOrderItemDto {
   productId: number;
 
   @IsPositive()
+  @IsNumber()
   quantity: number;
 
   @IsPositive()
+  @IsNumber()
   price: number;
 }

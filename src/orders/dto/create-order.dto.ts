@@ -1,4 +1,4 @@
-import { IsEnum, IsString, IsNumber, IsOptional, IsArray, ValidateNested } from 'class-validator'
+import { IsIn, IsString, IsNumber, IsOptional, IsArray, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { CreateOrderItemDto } from './create-order-item-dto'
 
@@ -7,24 +7,27 @@ export const ORDER_STATUS = [
   'in_progress',
   'success',
   'failed',
-  'reverted'
+  'cancelled'
 ] as const
 
 export class CreateOrderDto {
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
-  customerId: number
+  customerId?: number;
 
   @IsOptional()
   @IsString()
-  orderName: string
+  orderName?: string
 
-  @IsEnum(ORDER_STATUS, {
-    message: 'Status not valid',
-  })
-  status: typeof ORDER_STATUS[number]
+  @IsOptional()
+  @IsString()
+  notes?: string
 
-  @IsNumber()
+  @IsIn(ORDER_STATUS, { message: 'Status not valid' })
+  status: (typeof ORDER_STATUS)[number]
+
+  @IsString()
   totalAmount: string
 
   @IsArray()
