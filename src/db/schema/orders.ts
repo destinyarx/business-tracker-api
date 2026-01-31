@@ -11,8 +11,9 @@ export const orders = pgTable('orders', {
         onDelete: 'set null'
     }),
     orderName: varchar('order_name', { length: 50 }),
-    orderStatus: orderStatusEnum('order_status').notNull(),
     totalAmount: numeric('total_amount', { precision: 12, scale: 2 }),
+    notes: varchar('notes', { length: 50 }),
+    status: varchar('status', { length: 15 }),
 
     createdBy: varchar('created_by', { length: 100 }),
     createdAt: timestamp('created_at', { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),

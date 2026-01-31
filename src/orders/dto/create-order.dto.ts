@@ -11,6 +11,7 @@ export const ORDER_STATUS = [
 ] as const
 
 export class CreateOrderDto {
+  @IsOptional()
   @IsNumber()
   customerId: number
 
@@ -21,7 +22,7 @@ export class CreateOrderDto {
   @IsEnum(ORDER_STATUS, {
     message: 'Status not valid',
   })
-  orderStatus: typeof ORDER_STATUS[number]
+  status: typeof ORDER_STATUS[number]
 
   @IsNumber()
   totalAmount: string

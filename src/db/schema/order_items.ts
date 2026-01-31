@@ -6,7 +6,7 @@ import { orders } from '../schema/orders'
 export const orderItems = pgTable('order_items',  {
     id: serial('id').primaryKey().notNull(),
     orderId: integer('order_id').references(() => orders.id, {
-        onDelete: 'set null'
+        onDelete: 'cascade'
     }),
     productId: integer('product_id').references(() => products.id, {
         onDelete: 'set null'

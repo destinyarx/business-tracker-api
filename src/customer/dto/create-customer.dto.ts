@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsString, Length, Matches } from 'class-validator';
+import { IsEmail, IsEnum, IsString, IsOptional, Length, Matches } from 'class-validator';
 
 enum Gender {
     Male = 'M',
@@ -6,45 +6,36 @@ enum Gender {
     Unknown = 'X'
 }
 
-enum Status {
-    Active = 'A',
-    Inactive = 'I'
-}
-
 export class CreateCustomerDto {
     @IsString()
-    alias: string;
+    name: string
 
-    @IsString()
-    fullName: string;
-
-    @IsString()
-    firstName: string;
-
-    @IsString()
-    middleName: string;
-
-    @IsString()
-    lastName: string;
-
+    @IsOptional()
     @IsEnum(Gender, {
         message: 'gender must be either M or F',
     })
-    gender: Gender;
-
-    @IsEnum(Status, {
-        message: 'status must be either A (Active) or I (Inactive)',
-    })
-    status: Status;
-
-    @IsEmail()
-    email: string;
+    gender: Gender
 
     @IsString()
-    createdBy: string;
+    customerType: string
 
+    // @IsOptional()
+    // @IsEnum(Status, {
+    //     message: 'status must be either A (Active) or I (Inactive)',
+    // })
+    // status: Status;
+
+    @IsOptional()
+    @IsEmail()
+    email: string
+
+    @IsOptional()
+    @IsString()
+    notes: string
+
+    @IsOptional()
     @IsString()
     @Length(11, 11, { message: 'Phone number must be exactly 11 digits' })
     @Matches(/^[0-9]+$/, { message: 'Phone number must contain only digits' })
-    phone: string;
+    phone: string
 }

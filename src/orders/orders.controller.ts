@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } fr
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { UpdateOrderStatusDto } from './dto/update-order-status-dto';
 import { UserId } from '../common/decorators/user-id.decorator'
 import { UserCacheInterceptor } from '../common/interceptors/user-cache.interceptor'
 
@@ -12,27 +13,43 @@ export class OrdersController {
 
   @Post()
   create(@UserId() userId: string, @Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(userId, createOrderDto);
+    return this.ordersService.create(userId, createOrderDto)
   }
 
   @Get()
   @UseInterceptors(UserCacheInterceptor)
   findAll(@UserId() userId: string) {
-    return this.ordersService.findAll(userId);
+    return this.ordersService.findAll(userId)
   }
 
   @Get(':id')
   findOne(@UserId() userId: string, @Param('id') id: string) {
-    return this.ordersService.findOne(+id, userId);
+    return this.ordersService.findOne(+id, userId)
   }
 
   @Patch(':id')
-  update(@UserId() userId: string, @Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, userId, updateOrderDto);
+  update(
+    @UserId() userId: string, 
+    @Param('id') id: string, 
+    @Body() updateOrderDto: UpdateOrderDto
+  ) {
+    return this.ordersService.update(+id, userId, updateOrderDto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id,);
+  @UseInterceptors(UserCacheInterceptor)
+  remove(@UserId() userId: string, @Param('id') id: string) {
+    return this.ordersService.remove(+id, userId)
+  }
+
+  @Patch('/status/:id')
+  updateOrderStatus(
+    @UserId() userId: string, 
+    @Param('id') id: string, 
+    @Body() data: UpdateOrderStatusDto
+  ) {
+    const { status } = data
+    console.log(status)
+    return this.ordersService.updateOrderStatus(+id, status, userId)
   }
 }

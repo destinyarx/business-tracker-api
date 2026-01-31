@@ -27,6 +27,7 @@ export class CustomerService {
     try {
       return await getAllCustomers(userId);
     } catch (error) {
+      console.log(error)
       const message = error instanceof Error ? error.message : 'Failed to create user';
       throw new BadRequestException(message);
     }
