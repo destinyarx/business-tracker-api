@@ -11,12 +11,14 @@ export class CustomerController {
 
   @Post()
   create(@UserId() userId: string, @Body() createCustomerDto: CreateCustomerDto) {
+    console.log(createCustomerDto)
     return this.customerService.create(userId, createCustomerDto);
   }
 
   @Get()
   @UseInterceptors(UserCacheInterceptor)
   findAll(@UserId() userId: string) {
+    console.log(userId)
     return this.customerService.findAll(userId);
   }
 

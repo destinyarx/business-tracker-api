@@ -21,7 +21,7 @@ import { AppointmentModule } from './appointment/appointment.module';
 import { ServiceModule } from './service/service.module';
 import { ProductModule } from './product/product.module';
 import { EmailModule } from './email/email.module';
-import { ChatgptModule } from './chatgpt/chatgpt.module';
+// import { ChatgptModule } from './chatgpt/chatgpt.module';
 import { OrdersModule } from './orders/orders.module';
 
 @Module({
@@ -43,7 +43,7 @@ import { OrdersModule } from './orders/orders.module';
     AppointmentModule, 
     ServiceModule, 
     EmailModule, 
-    ChatgptModule, 
+    // ChatgptModule, 
     ProductModule, OrdersModule, 
   ],
   controllers: [AppController],

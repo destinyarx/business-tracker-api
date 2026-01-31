@@ -8,5 +8,5 @@ export class CreateOrderItemDto {
   quantity: number;
 
   @IsPositive()
-  priceAtPurchase: number;
+  price: number;
 }

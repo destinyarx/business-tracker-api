@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
+import { GetExpensePaginateDto } from './dto/get-expense-paginate-dto'
+import { UserId } from '../common/decorators/user-id.decorator'
+ 
 
 @Controller('expenses')
 export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
 
   @Post()
-  create(@Body() createExpenseDto: CreateExpenseDto) {
-    return this.expensesService.create(createExpenseDto);
+  create(@UserId() userId: string, @Body() createExpenseDto: CreateExpenseDto) {
+    console.log(createExpenseDto)
+    return this.expensesService.create(createExpenseDto, userId);
   }
 
-  @Get()
-  findAll() {
-    return this.expensesService.findAll();
+  @Get('/paginated')
+  findPaginated(@UserId() userId: string, @Query() query: GetExpensePaginateDto) {
+    return this.expensesService.getPaginated(query, userId)
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.expensesService.findOne(+id);
+  findOne(@UserId() userId: string, @Param('id') id: string) {
+    return this.expensesService.findOne(+id, userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExpenseDto: UpdateExpenseDto) {
-    return this.expensesService.update(+id, updateExpenseDto);
+  update(@UserId() userId: string, @Param('id') id: string, @Body() updateExpenseDto: UpdateExpenseDto) {
+    return this.expensesService.update(+id, updateExpenseDto, userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@UserId() userId: string, @Param('id') id: string) {
     return this.expensesService.remove(+id);
   }
 }

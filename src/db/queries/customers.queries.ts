@@ -23,11 +23,12 @@ export async function getCustomer(id: number) {
 }
 
 export async function addCustomer(userId: string, customerData: Customer) {
+    console.log(customerData)
     return await db
         .insert(customers)
         .values({
             ...customerData,
-            createdBy: userId
+            createdBy: userId,
         })
         .returning({ insertedId: customers.id });
 };

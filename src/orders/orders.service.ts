@@ -3,7 +3,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
-import { addOrder, addOrderItems, getOrders, getOrderById, updateOrder, deleteOrder } from 'src/db/queries/orders.queries'
+import { addOrder, getOrders, getOrderById, updateOrder, deleteOrder, updateOrderStatus } from 'src/db/queries/orders.queries'
 
 @Injectable()
 export class OrdersService {
@@ -13,13 +13,12 @@ export class OrdersService {
 
   async create(userId: string, createOrderDto: CreateOrderDto) {
     try {
-      const order = await addOrder(createOrderDto, userId);
-      const orderId = order[0].id
-      await addOrderItems(orderId, createOrderDto.orderItems)
+      const order = await addOrder(userId, createOrderDto);
 
-      await this.cacheManager.del(`${userId}:/products`)
-      return orderId
+      await this.cacheManager.del(`${userId}:/orders`)
+      return order
     } catch (error) {
+      console.log(error)
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';
       throw new BadRequestException(message);
     }
@@ -45,16 +44,31 @@ export class OrdersService {
 
   async update(id: number, userId: string, updateOrderDto: UpdateOrderDto) {
     try {
-      return await updateOrder(id, updateOrderDto, userId)
+      const response = await updateOrder(id, updateOrderDto, userId)
+      await this.cacheManager.del(`${userId}:/orders`)
+      return response
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';
       throw new BadRequestException(message);
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number, userId: string) {
     try {
-      return await deleteOrder(id)
+      const response = await deleteOrder(id)
+      await this.cacheManager.del(`${userId}:/orders`)
+      return response
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unexpected error occurs';
+      throw new BadRequestException(message);
+    }
+  }
+
+  async updateOrderStatus(id: number, status: string, userId: string) {
+    try {
+      const response = await updateOrderStatus(id, status, userId)
+      await this.cacheManager.del(`${userId}:/orders`)
+      return response
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';
       throw new BadRequestException(message);

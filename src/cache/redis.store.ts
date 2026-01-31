@@ -3,7 +3,6 @@ import Redis from 'ioredis';
 
 export function createRedisStore(): CacheManagerStore {
   const client = new Redis(process.env.REDIS_URL!, {
-    username: 'default',
     password: process.env.REDIS_TOKEN!,
     tls: {}, 
   });
