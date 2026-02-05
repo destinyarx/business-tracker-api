@@ -35,13 +35,15 @@ export async function getProduct(id: number) {
 export async function addProduct(productData: Product, userId: string) {
   delete productData.id
 
-  return await db
-      .insert(products)
-      .values({
-        ...productData,
-        createdBy: userId
-      })
-      .returning({ id: products.id });
+  const [product] = await db
+    .insert(products)
+    .values({
+      ...productData,
+      createdBy: userId
+    })
+    .returning({ id: products.id });
+  
+  return product?.id ?? false;
 };
 
 export async function updateProduct(id: number, data: Partial<Product>, userId: string) { 
@@ -49,7 +51,7 @@ export async function updateProduct(id: number, data: Partial<Product>, userId: 
         .update(products)
         .set({
           ...data,
-          updatedAt: new Date().toISOString(),
+          updatedAt: new Date(),
           updatedBy: userId,
         })
         .where(eq(products.id, id))

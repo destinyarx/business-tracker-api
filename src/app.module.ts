@@ -23,6 +23,7 @@ import { ProductModule } from './product/product.module';
 import { EmailModule } from './email/email.module';
 // import { ChatgptModule } from './chatgpt/chatgpt.module';
 import { OrdersModule } from './orders/orders.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { OrdersModule } from './orders/orders.module';
     ServiceModule, 
     EmailModule, 
     // ChatgptModule, 
-    ProductModule, OrdersModule, 
+    ProductModule, OrdersModule, FilesModule, 
   ],
   controllers: [AppController],
   providers: [

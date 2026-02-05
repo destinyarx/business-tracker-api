@@ -4,8 +4,6 @@ import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { GetExpensePaginateDto } from './dto/get-expense-paginate-dto'
 import { getExpensesPaginated, getExpenseById, createExpense, updateExpense, deleteExpense } from '../db/queries/expenses.queries'
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 @Injectable()
 export class ExpensesService {
   async create(createExpenseDto: CreateExpenseDto, userId: string) {

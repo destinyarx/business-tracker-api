@@ -13,12 +13,12 @@ export const products = pgTable('products', {
     price: decimal('price', { precision: 10, scale: 2, mode: 'number' }).notNull(),
     profit: decimal('profit', { precision: 10, scale: 2, mode: 'number' }),
     stock: integer().default(0),
-    image: varchar({ length: 100 }),
+    imageUrl: varchar('image_url', { length: 255 }),
 
     createdBy: varchar('created_by', { length: 100 }),
-    createdAt: timestamp('created_at', { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedBy: varchar('updated_by', { length: 100 }),
-    updatedAt: timestamp('updated_at', { mode: 'string' }),
+    updatedAt: timestamp('updated_at', { mode: 'date' }),
 });
 
 export const productRelations = relations(productVariants, ({ many }) => ({
