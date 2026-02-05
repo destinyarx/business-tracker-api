@@ -35,7 +35,7 @@ export const expenses = pgTable('expenses', {
     title: varchar('title', { length: 150 }).notNull(),
     description: text('description'),
     amount: decimal('amount', { precision: 10, scale: 2 }).$type<number>().notNull(),
-    dateIncurred: timestamp('date_incurred', { mode: 'string' }),
+    dateIncurred: timestamp('date_incurred', { mode: 'date' }),
     referenceNumber: varchar('reference_number', { length: 80 }),
     category: expenseCategoryEnum('category').notNull(),
     categoryOther: varchar('category_other', { length: 50 }),
@@ -43,10 +43,10 @@ export const expenses = pgTable('expenses', {
     paymentMethodOther: varchar('payment_other', { length: 50 }),
 
     createdBy: varchar('created_by', { length: 100 }).notNull(),
-    createdAt: timestamp('created_at', { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedBy: varchar('updated_by', { length: 100 }),
     updatedAt: timestamp('updated_at', { mode: 'string' }),
-    deletedAt: timestamp('deleted_at', { mode: 'string' })
+    deletedAt: timestamp('deleted_at', { mode: 'date' })
 }, (table) => ({
     createdByIdx: index('expenses_created_by_idx').on(table.createdBy)
 }));

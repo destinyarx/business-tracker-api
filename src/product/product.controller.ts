@@ -10,10 +10,7 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  create(
-    @UserId() userId: string, 
-    @Body() createProductDto: CreateProductDto
-  ) {
+  create(@UserId() userId: string, @Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto, userId);
   }
 
@@ -24,10 +21,7 @@ export class ProductController {
   }
 
   @Get(':id')
-  findOne(
-    @UserId() userId: string,
-    @Param('id') id: string
-  ) {
+  findOne(@UserId() userId: string, @Param('id') id: string) {
     return this.productService.findOne(+id);
   }
 
@@ -41,10 +35,7 @@ export class ProductController {
   }
 
   @Delete(':id')
-  remove(
-    @UserId() userId: string,
-    @Param('id') id: string
-  ) {
+  remove(@UserId() userId: string, @Param('id') id: string) {
     return this.productService.remove(+id, userId);
   }
 
@@ -53,6 +44,7 @@ export class ProductController {
     @Query('limit', ParseIntPipe) limit: number,
     @Query('offset', ParseIntPipe) offset: number,
   ) {
+    console.log(limit, offset)
     return 'PRODUCTS'
     // return this.productService.findPaginated(limit, offset);
   }
