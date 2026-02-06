@@ -1,4 +1,4 @@
-import { Controller, Post, UseInterceptors, Req } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, Req, Delete, Param } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserId } from '../common/decorators/user-id.decorator'
@@ -22,5 +22,10 @@ export class FilesController {
         const filename = String(req.headers['x-filename'] || 'upload.bin');
 
         return this.fileService.uploadProductImage(userId, buffer, filename, contentType);
+    }
+
+    @Delete('delete/product-image/:filename')
+    async deleteProductImage(@UserId() userId: string, @Param('filename') filename: string) {
+        return this.fileService.deleteProductImage(userId, filename)
     }
 }

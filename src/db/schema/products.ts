@@ -13,6 +13,7 @@ export const products = pgTable('products', {
     price: decimal('price', { precision: 10, scale: 2, mode: 'number' }).notNull(),
     profit: decimal('profit', { precision: 10, scale: 2, mode: 'number' }),
     stock: integer().default(0),
+    image: varchar('image', { length: 255 }),
     imageUrl: varchar('image_url', { length: 255 }),
 
     createdBy: varchar('created_by', { length: 100 }),
