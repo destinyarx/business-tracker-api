@@ -22,6 +22,22 @@ export class FilesService {
 
         const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(data.path);
 
-        return { path: data.path, publicUrl: publicData.publicUrl };
+        return {
+            imageName: name, 
+            path: data.path, 
+            publicUrl: publicData.publicUrl 
+        };
+    }
+
+    async deleteProductImage(userId: string, filename: string) {
+        const { error } = await supabase.storage
+            .from('product-images')
+            .remove([`${userId}/${filename}`])
+          
+        if (error) {
+            throw error
+        }
+
+        return true
     }
 }
