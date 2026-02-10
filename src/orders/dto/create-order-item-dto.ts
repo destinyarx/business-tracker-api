@@ -2,7 +2,7 @@ import { IsNumber, IsPositive } from 'class-validator';
 
 export class CreateOrderItemDto {
   @IsNumber()
-  productId: number;
+  id: number;
 
   @IsPositive()
   @IsNumber()

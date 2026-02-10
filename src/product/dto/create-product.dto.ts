@@ -7,7 +7,7 @@ export class CreateProductDto {
 
     @IsOptional()
     @IsString()
-    description: string
+    description?: string
 
     @IsEnum(ProductCategory, {
         message: 'Category not found.'
@@ -16,31 +16,35 @@ export class CreateProductDto {
 
     @IsOptional()
     @IsString()
-    sku: string
+    sku?: string
 
     @IsOptional()
     @IsString()
-    supplier: string
+    supplier?: string
 
     @IsOptional()
     @IsString()
-    barcode: string
+    barcode?: string
 
     @IsNumber()
     price: number
 
     @IsOptional()
     @IsNumber()
-    profit: number
+    profit?: number
 
     @IsNumber()
     stock: number
 
     @IsOptional()
     @IsString()
-    image: string
+    image?: string
 
     @IsOptional()
     @IsString()
-    imageUrl: string
+    imageUrl?: string
+
+    @IsOptional()
+    @IsString()
+    imageSource?: string
 }

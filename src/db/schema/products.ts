@@ -15,6 +15,7 @@ export const products = pgTable('products', {
     stock: integer().default(0),
     image: varchar('image', { length: 255 }),
     imageUrl: varchar('image_url', { length: 255 }),
+    imageSource: varchar('image_source', { length: 10 }),
 
     createdBy: varchar('created_by', { length: 100 }),
     createdAt: timestamp('created_at', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`).notNull(),

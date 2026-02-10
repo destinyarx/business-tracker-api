@@ -1,9 +1,11 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { UpdateOrderStatusDto } from './dto/update-order-status-dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { addOrder, getOrders, getOrderById, updateOrder, deleteOrder, updateOrderStatus } from 'src/db/queries/orders.queries'
+import { ConflictException } from '@nestjs/common'
 
 @Injectable()
 export class OrdersService {
@@ -64,10 +66,18 @@ export class OrdersService {
     }
   }
 
-  async updateOrderStatus(id: number, status: string, userId: string) {
+  async updateOrderStatus(id: number, data: UpdateOrderStatusDto, userId: string) {
     try {
-      const response = await updateOrderStatus(id, status, userId)
+      const response = await updateOrderStatus(id, data, userId)
+
+      if (!response) {
+        throw new ConflictException({
+          message: 'Insufficient stock'
+        });
+      }
+
       await this.cacheManager.del(`${userId}:/orders`)
+      await this.cacheManager.del(`${userId}:/products`)
       return response
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected error occurs';

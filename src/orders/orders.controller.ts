@@ -27,6 +27,16 @@ export class OrdersController {
     return this.ordersService.findOne(+id, userId)
   }
 
+  @Patch(':id/status')
+  async updateOrderStatus(
+    @UserId() userId: string, 
+    @Param('id') id: string, 
+    @Body() data: UpdateOrderStatusDto
+  ) {
+    console.log(data)
+    return await this.ordersService.updateOrderStatus(+id, data, userId)
+  }
+
   @Patch(':id')
   update(
     @UserId() userId: string, 
@@ -40,16 +50,5 @@ export class OrdersController {
   @UseInterceptors(UserCacheInterceptor)
   remove(@UserId() userId: string, @Param('id') id: string) {
     return this.ordersService.remove(+id, userId)
-  }
-
-  @Patch('/status/:id')
-  updateOrderStatus(
-    @UserId() userId: string, 
-    @Param('id') id: string, 
-    @Body() data: UpdateOrderStatusDto
-  ) {
-    const { status } = data
-    console.log(status)
-    return this.ordersService.updateOrderStatus(+id, status, userId)
   }
 }
