@@ -43,7 +43,7 @@ import {
           const message = isWrapped ? data.message ?? 'Success' : 'Success'
   
           return {
-            statusCode: response?.statusCode ,
+            statusCode: response?.statusCode,
             message,
             data: extractedData,
             timestamp: new Date().toISOString(),

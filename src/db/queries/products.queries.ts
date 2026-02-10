@@ -34,7 +34,7 @@ export async function getProduct(id: number) {
 
 export async function addProduct(productData: Product, userId: string) {
   delete productData.id
-
+  
   const [product] = await db
     .insert(products)
     .values({

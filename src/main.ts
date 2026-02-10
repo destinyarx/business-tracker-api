@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptors';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { ValidationPipe } from '@nestjs/common'
+import { ValidationPipe, BadRequestException } from '@nestjs/common'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -26,6 +26,7 @@ async function bootstrap() {
 		  transform: true,       
 		  whitelist: true,
 		  forbidNonWhitelisted: false,
+		  exceptionFactory: (errors) => new BadRequestException(errors),
 		}),
 	)
 
