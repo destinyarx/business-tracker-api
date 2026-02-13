@@ -1,14 +1,14 @@
 import { db } from '../index';
-import { eq, isNull, desc, asc, and, inArray, sql } from 'drizzle-orm';
+import { eq, isNull, desc, asc, and, inArray, sql, ilike, or } from 'drizzle-orm';
 import { orders } from '../schema/orders'
 import { products } from '../schema/products'
 import { orderItems } from '../schema/order_items'
 import { CreateOrderItemDto } from 'src/orders/dto/create-order-item-dto'
 import { UpdateOrderStatusDto } from 'src/orders/dto/update-order-status-dto'
+import { GetOrderDto } from 'src/orders/dto/get-order.dto'
 import { ItemDto } from 'src/orders/dto/update-order-status-dto'
 import type { Order } from '../schema/orders'
 import type { Product } from '../schema/products'
-import { ConflictException } from '@nestjs/common'
 
 type Tx = Parameters<typeof db.transaction>[0] extends (tx: infer T) => any ? T : never;
 
@@ -64,11 +64,20 @@ export async function addOrderItems(id: number, items: CreateOrderItemDto[]) {
   );
 }
 
-export async function getOrders(userId: string) {
-  return await db.query.orders.findMany({
+export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
+  const result = await db.query.orders.findMany({
     where: and(
       eq(orders.createdBy, userId),
-      isNull(orders.deletedAt)
+      isNull(orders.deletedAt),
+
+      params?.searchKey ? or(
+        ilike(orders.orderName, `%${params.searchKey}%`),
+        ilike(orders.notes, `%${params.searchKey}%`)
+      ) : undefined,
+
+      params?.filter && params.filter !== 'all'
+        ? eq(orders.status, params.filter) 
+        : undefined
     ),
     orderBy: asc(orders.createdAt),
     with: {
@@ -92,7 +101,20 @@ export async function getOrders(userId: string) {
         columns: { name: true }
       }, 
     },
+    limit: params.limit ? params.limit + 1 : undefined,
+    offset: params.offset
   })
+
+  let hasNext = false
+  if (params.limit && result?.length > params.limit) {
+    hasNext = true
+    result.pop()
+  }
+
+  return {
+    orders: result,
+    hasNext: hasNext
+  }
 }
 
 export async function getOrderById(id: number, userId: string) {
@@ -137,15 +159,11 @@ export async function updateOrderStatus(id: number, data: UpdateOrderStatusDto, 
   return await db.transaction(async (tx) => {
     await updateStatus(tx, id, data.status, userId)
 
-    if (['cancelled', 'failed'].includes(data.status)) {
-      // TODO: add revert quantity here
-      console.log('test')
-    } else if (data.status === 'in_progress') {
-      const success = await deductProductQty(tx, data.orderItems)
-      return success
+    if (data.status === 'in_progress') {
+      return await updateProductQuantity(tx, data.orderItems, 'deduct')
+    } else {
+      return await updateProductQuantity(tx, data.orderItems, 'revert')
     }
-
-    return true
   })
 }
 
@@ -166,7 +184,7 @@ async function updateStatus(tx: Tx, id: number, status: string, userId: string) 
   }
 }
 
-async function deductProductQty(tx: Tx, orderItems: ItemDto[]) {
+async function updateProductQuantity(tx: Tx, orderItems: ItemDto[], mode: 'deduct' | 'revert') {
   const ids = orderItems.map(item => item.product.id)
 
   const currentProducts = await tx
@@ -182,7 +200,11 @@ async function deductProductQty(tx: Tx, orderItems: ItemDto[]) {
     
     if (item.quantity > stock) return false
 
-    updatedStock[item.product.id] = stock - item.quantity
+    if (mode === 'deduct') {
+      updatedStock[item.product.id] = stock - item.quantity
+    } else {
+      updatedStock[item.product.id] = stock + item.quantity
+    }
   }
 
   const caseExpr = sql`CASE ${products.id} ${sql.join(
@@ -198,34 +220,3 @@ async function deductProductQty(tx: Tx, orderItems: ItemDto[]) {
 
   return true
 }
-
-// async function deductQuantity(tx: Tx, orderItems: OrderItem[]) {
-//   const items = aggregate(orderItems);
-//   const ids = items.map(i => i.productId);
-
-//   const current = await tx
-//     .select({ id: products.id, stock: products.stock })
-//     .from(products)
-//     .where(inArray(products.id, ids));
-
-//   const stockById = new Map(current.map(r => [r.id, r.stock]));
-
-//   for (const { productId, qty } of items) {
-//     const stock = stockById.get(productId);
-//     if (stock == null) throw new Error(`Product not found: ${productId}`);
-//     if (stock < qty) throw new Error(`Insufficient stock for ${productId}`);
-//   }
-
-//   const caseExpr = sql`CASE ${products.id} ${sql.join(
-//     items.map(i => sql`WHEN ${i.productId} THEN ${i.qty}`),
-//     sql` `
-//   )} ELSE 0 END`;
-
-//   const updated = await tx
-//     .update(products)
-//     .set({ stock: sql`${products.stock} - (${caseExpr})` })
-//     .where(inArray(products.id, ids))
-//     .returning({ id: products.id, stock: products.stock });
-
-//   return { current, updated };
-// }

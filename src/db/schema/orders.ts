@@ -19,7 +19,6 @@ export const orders = pgTable('orders', {
     cancelledNotes: varchar('cancelled_notes', { length: 50 }),
     cancelledAt: timestamp('cancelled_at', { mode: 'date' }),
 
-
     createdBy: varchar('created_by', { length: 100 }),
     createdAt: timestamp('created_at', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedBy: varchar('updated_by', { length: 100 }),

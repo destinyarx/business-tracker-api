@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status-dto';
+import { GetOrderDto } from './dto/get-order.dto'
 import { UserId } from '../common/decorators/user-id.decorator'
 import { UserCacheInterceptor } from '../common/interceptors/user-cache.interceptor'
 
@@ -17,9 +18,9 @@ export class OrdersController {
   }
 
   @Get()
-  @UseInterceptors(UserCacheInterceptor)
-  findAll(@UserId() userId: string) {
-    return this.ordersService.findAll(userId)
+  // @UseInterceptors(UserCacheInterceptor)
+  findAll(@UserId() userId: string, @Query() query: GetOrderDto) {
+    return this.ordersService.findAll(query, userId)
   }
 
   @Get(':id')
