@@ -20,4 +20,8 @@ export class GetOrderDto {
     @IsOptional()
     @IsString()
     searchKey?: string
+
+    @IsOptional()
+    @IsString()
+    timePeriod?: string
 }

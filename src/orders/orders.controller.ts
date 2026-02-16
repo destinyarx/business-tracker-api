@@ -20,6 +20,7 @@ export class OrdersController {
   @Get()
   // @UseInterceptors(UserCacheInterceptor)
   findAll(@UserId() userId: string, @Query() query: GetOrderDto) {
+    console.log(query)
     return this.ordersService.findAll(query, userId)
   }
 
