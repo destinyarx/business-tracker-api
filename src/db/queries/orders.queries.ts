@@ -1,5 +1,5 @@
 import { db } from '../index';
-import { eq, isNull, desc, asc, and, inArray, sql, ilike, or } from 'drizzle-orm';
+import { eq, isNull, desc, asc, and, inArray, sql, ilike, or, gte, lte } from 'drizzle-orm';
 import { orders } from '../schema/orders'
 import { products } from '../schema/products'
 import { orderItems } from '../schema/order_items'
@@ -9,6 +9,8 @@ import { GetOrderDto } from 'src/orders/dto/get-order.dto'
 import { ItemDto } from 'src/orders/dto/update-order-status-dto'
 import type { Order } from '../schema/orders'
 import type { Product } from '../schema/products'
+import { getDateRangeFromPeriod, type TimePeriod } from '../../common/utils/date-range'
+
 
 type Tx = Parameters<typeof db.transaction>[0] extends (tx: infer T) => any ? T : never;
 
@@ -65,6 +67,10 @@ export async function addOrderItems(id: number, items: CreateOrderItemDto[]) {
 }
 
 export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
+  const range = params?.timePeriod ? getDateRangeFromPeriod(params.timePeriod as TimePeriod) : undefined
+
+  console.log(params)
+
   const result = await db.query.orders.findMany({
     where: and(
       eq(orders.createdBy, userId),
@@ -77,7 +83,12 @@ export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
 
       params?.filter && params.filter !== 'all'
         ? eq(orders.status, params.filter) 
-        : undefined
+        : undefined,
+
+      params?.timePeriod ? and (
+          gte(orders.createdAt, range!.start),
+          lte(orders.createdAt, range!.end)
+        ) : undefined
     ),
     orderBy: asc(orders.createdAt),
     with: {
@@ -102,7 +113,7 @@ export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
       }, 
     },
     limit: params.limit ? params.limit + 1 : undefined,
-    offset: params.offset
+    offset: params.offset ?? undefined
   })
 
   let hasNext = false
