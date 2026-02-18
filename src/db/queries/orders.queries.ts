@@ -23,6 +23,18 @@ type OrderData = Order & {
 }
 
 export async function addOrder(userId: string, data: OrderData) {
+  let profitInaccurate: boolean = false
+  let totalProfit: number = 0
+
+  data.orderItems.map((item) => {
+    if (item.profit) {
+      totalProfit += item.profit * item.quantity
+    } else {
+      profitInaccurate = true
+    }
+  })
+
+
   await db.transaction( async (tx) => {
     const insertedOrder = await tx
       .insert(orders)
@@ -32,6 +44,8 @@ export async function addOrder(userId: string, data: OrderData) {
         status: 'pending',
         notes: data.notes,
         totalAmount: String(data.totalAmount),
+        totalProfit: String(totalProfit),
+        profitInaccurate: profitInaccurate,
         createdBy: userId
       })
       .returning({ id: orders.id})
@@ -103,7 +117,8 @@ export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
             columns: {
               id: true,
               title: true,
-              price: true
+              price: true,
+              profit: true,
             }
           },
         },
@@ -184,7 +199,7 @@ async function updateStatus(tx: Tx, id: number, status: string, userId: string) 
     .update(orders)
     .set({
         status: status,
-        updatedAt: new Date(),
+        statusUpdatedAt: new Date(),
         updatedBy: userId
     })
     .where(eq(orders.id, id))

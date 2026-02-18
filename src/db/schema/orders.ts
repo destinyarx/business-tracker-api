@@ -23,6 +23,7 @@ export const orders = pgTable('orders', {
     createdAt: timestamp('created_at', { mode: 'date' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedBy: varchar('updated_by', { length: 100 }),
     updatedAt: timestamp('updated_at', { mode: 'date' }),
+    statusUpdatedAt: timestamp('status_updated_at', { mode: 'date' }),
     deletedAt: timestamp('deleted_at', { mode: 'date' }),
 }, (table) => {
     return {
