@@ -24,4 +24,12 @@ export class GetOrderDto {
     @IsOptional()
     @IsString()
     timePeriod?: string
+
+    @IsOptional()
+    @IsString()
+    sort?: string
+
+    @IsOptional()
+    @IsString()
+    sortByStatus?: string
 }

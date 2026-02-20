@@ -82,8 +82,21 @@ export async function addOrderItems(id: number, items: CreateOrderItemDto[]) {
 
 export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
   const range = params?.timePeriod ? getDateRangeFromPeriod(params.timePeriod as TimePeriod) : undefined
+  const orderBy: any[] = [];
 
-  console.log(params)
+  orderBy.push(
+    params?.sort === 'asc'
+      ? asc(orders.createdAt)
+      : desc(orders.createdAt)
+  );
+
+  if (params?.sortByStatus) {
+    orderBy.push(
+      params.sortByStatus === 'asc'
+        ? asc(orders.statusUpdatedAt)
+        : desc(orders.statusUpdatedAt)
+    );
+  }
 
   const result = await db.query.orders.findMany({
     where: and(
@@ -104,7 +117,7 @@ export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
           lte(orders.createdAt, range!.end)
         ) : undefined
     ),
-    orderBy: asc(orders.createdAt),
+    orderBy: orderBy,
     with: {
       items: {
         columns: {
