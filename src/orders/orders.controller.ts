@@ -35,7 +35,6 @@ export class OrdersController {
     @Param('id') id: string, 
     @Body() data: UpdateOrderStatusDto
   ) {
-    console.log(data)
     return await this.ordersService.updateOrderStatus(+id, data, userId)
   }
 

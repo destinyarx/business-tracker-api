@@ -1,29 +1,11 @@
-import { IsEmail, IsEnum, IsString, IsOptional, Length, Matches } from 'class-validator';
-
-enum Gender {
-    Male = 'M',
-    Female = 'F',
-    Unknown = 'X'
-}
+import { IsEmail, IsString, IsOptional, Length, Matches } from 'class-validator';
 
 export class CreateCustomerDto {
     @IsString()
     name: string
 
-    @IsOptional()
-    @IsEnum(Gender, {
-        message: 'gender must be either M or F',
-    })
-    gender: Gender
-
     @IsString()
     customerType: string
-
-    // @IsOptional()
-    // @IsEnum(Status, {
-    //     message: 'status must be either A (Active) or I (Inactive)',
-    // })
-    // status: Status;
 
     @IsOptional()
     @IsEmail()

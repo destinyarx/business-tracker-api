@@ -113,8 +113,8 @@ export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
         : undefined,
 
       params?.timePeriod ? and (
-          gte(orders.createdAt, range!.start),
-          lte(orders.createdAt, range!.end)
+          gte(params?.sortByStatus ? orders.statusUpdatedAt : orders.createdAt, range!.start),
+          lte(params?.sortByStatus ? orders.statusUpdatedAt : orders.createdAt, range!.end)
         ) : undefined
     ),
     orderBy: orderBy,

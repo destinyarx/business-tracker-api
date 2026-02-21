@@ -18,7 +18,6 @@ export class CustomerController {
   @Get()
   @UseInterceptors(UserCacheInterceptor)
   findAll(@UserId() userId: string) {
-    console.log(userId)
     return this.customerService.findAll(userId);
   }
 
