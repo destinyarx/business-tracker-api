@@ -13,7 +13,6 @@ export class CreateOrderItemDto {
   price: number;
 
   @IsOptional()
-  @IsPositive()
   @IsNumber()
   profit: number;
 }

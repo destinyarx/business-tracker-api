@@ -23,7 +23,6 @@ export class CustomerService {
   }
 
   async findAll(userId: string) {
-    console.log('findAll')
     try {
       return await getAllCustomers(userId);
     } catch (error) {
