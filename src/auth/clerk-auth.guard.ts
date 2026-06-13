@@ -16,7 +16,7 @@ export class ClerkAuthGuard implements CanActivate {
       const payload = jwt.verify(
         token,
         process.env.SUPABASE_JWT_KEY!,
-        { algorithms: ['HS256'] }
+        { algorithms: ['ES256'] }
       );
 
       req['user'] = payload;
