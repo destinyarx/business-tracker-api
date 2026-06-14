@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { verifyToken } from '@clerk/backend';
 @Injectable()
 export class ClerkAuthGuard implements CanActivate {
-  async canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(req);
 
