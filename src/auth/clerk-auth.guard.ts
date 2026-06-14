@@ -16,6 +16,8 @@ export class ClerkAuthGuard implements CanActivate {
       throw new UnauthorizedException('Missing token');
     }
 
+    console.log("token: ",token)
+
     try {
       const payload = await verifyToken(token, {
         secretKey: process.env.CLERK_SECRET_KEY!,
