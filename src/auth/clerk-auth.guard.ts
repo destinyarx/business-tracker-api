@@ -23,7 +23,7 @@ export class ClerkAuthGuard implements CanActivate {
         // allowed frontend url
         authorizedParties: [
           'http://localhost:3000',
-          'https://business-tracker-eta.vercel.app/',
+          'https://business-tracker-eta.vercel.app',
         ],
       });
 
