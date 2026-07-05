@@ -12,7 +12,7 @@ async function bootstrap() {
 		origin: [
 			'http://localhost:3000', 
 			'https://business-tracker-eta.vercel.app',
-			'https://yourfrontend.com',
+			'https://business-tracker.jeremy-dev.me',
 		], 
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 		credentials: true, // allow cookies/auth headers
