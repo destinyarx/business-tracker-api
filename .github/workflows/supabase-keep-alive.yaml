@@ -28,6 +28,9 @@ jobs:
           SUPABASE_URL_2: ${{ secrets.SUPABASE_BUSINESS_TRACKER_URL }}
           SUPABASE_KEY_2: ${{ secrets.SUPABASE_PUBLISHABLE_BUSINESS_TRACKER_KEY }}
 
+          SUPABASE_URL_3: ${{ secrets.SUPABASE_ENT_CLINIC_URL }}
+          SUPABASE_KEY_3: ${{ secrets.SUPABASE_ENT_CLINIC_PUBLISHABLE_KEY }}
+
         run: |
           set -euo pipefail
 
@@ -65,3 +68,8 @@ jobs:
             "Supabase Project 2" \
             "${SUPABASE_URL_2}" \
             "${SUPABASE_KEY_2}"
+
+          ping_project \
+            "Supabase Project 3" \
+            "${SUPABASE_URL_3}" \
+            "${SUPABASE_KEY_3}"
