@@ -1,0 +1,66 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    # 1:17 AM, 9:17 AM, and 5:17 PM Manila time
+    - cron: "17 1,9,17 * * *"
+      timezone: "Asia/Manila"
+
+  # Allows you to test it manually
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping Supabase projects
+        shell: bash
+        env:
+          SUPABASE_URL_1: ${{ secrets.SUPABASE_WATER_STATION_URL }}
+          SUPABASE_KEY_1: ${{ secrets.SUPABASE_WATER_STATION_PUBLISHABLE_KEY }}
+
+          SUPABASE_URL_2: ${{ secrets.SUPABASE_BUSINESS_TRACKER_URL }}
+          SUPABASE_KEY_2: ${{ secrets.SUPABASE_PUBLISHABLE_BUSINESS_TRACKER_KEY }}
+
+        run: |
+          set -euo pipefail
+
+          ping_project() {
+            local project_name="$1"
+            local project_url="$2"
+            local project_key="$3"
+
+            echo "Pinging ${project_name}..."
+
+            curl \
+              --fail-with-body \
+              --silent \
+              --show-error \
+              --retry 3 \
+              --retry-all-errors \
+              --connect-timeout 20 \
+              --max-time 60 \
+              --request POST \
+              "${project_url}/rest/v1/rpc/keep_alive" \
+              --header "apikey: ${project_key}" \
+              --header "Content-Type: application/json" \
+              --data '{}'
+
+            echo
+            echo "${project_name} responded successfully."
+          }
+
+          ping_project \
+            "Supabase Project 1" \
+            "${SUPABASE_URL_1}" \
+            "${SUPABASE_KEY_1}"
+
+          ping_project \
+            "Supabase Project 2" \
+            "${SUPABASE_URL_2}" \
+            "${SUPABASE_KEY_2}"
