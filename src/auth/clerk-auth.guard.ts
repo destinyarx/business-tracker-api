@@ -1,11 +1,16 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { Request } from 'express';
+import type { FastifyRequest } from 'fastify';
 // import * as jwt from 'jsonwebtoken';
 import { verifyToken } from '@clerk/backend';
+
+type AuthenticatedRequest = FastifyRequest & {
+  user?: Awaited<ReturnType<typeof verifyToken>>;
+};
+
 @Injectable()
 export class ClerkAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest<Request>();
+    const req = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const token = this.extractTokenFromHeader(req);
 
     if (!token) {
@@ -30,10 +35,11 @@ export class ClerkAuthGuard implements CanActivate {
         ],
       });
 
-      req['user'] = payload;
+      req.user = payload;
       return true;
-    } catch (err: any) {
-      console.error('Clerk JWT verification failed:', err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error('Clerk JWT verification failed:', message);
       throw new UnauthorizedException('Invalid or expired token');
     }
 
@@ -52,7 +58,7 @@ export class ClerkAuthGuard implements CanActivate {
     // }
   }
 
-  private extractTokenFromHeader(req: Request): string | undefined {
+  private extractTokenFromHeader(req: FastifyRequest): string | undefined {
     const authHeader = req.headers['authorization'];
     if (!authHeader) return undefined;
 

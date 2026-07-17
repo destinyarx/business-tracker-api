@@ -1,13 +1,19 @@
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ExecutionContext, Injectable } from '@nestjs/common';
+import type { FastifyRequest } from 'fastify';
+
+type AuthenticatedRequest = FastifyRequest & {
+  user: { sub: string };
+};
+
 @Injectable()
 export class UserCacheInterceptor extends CacheInterceptor {
   trackBy(context: ExecutionContext): string | undefined {
-    const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest<AuthenticatedRequest>();
     // const userId = req.user.userId.sub;
     const userId = req.user.sub;
     const method = req.method;
-    const path = req.route?.path;
+    const path = req.routeOptions.url;
 
     // Only cache GET
     if (method !== 'GET') return undefined;
