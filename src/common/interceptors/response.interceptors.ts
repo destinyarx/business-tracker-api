@@ -4,6 +4,7 @@ import {
     Injectable,
     NestInterceptor
   } from '@nestjs/common'
+  import type { FastifyReply, FastifyRequest } from 'fastify'
   import { Observable } from 'rxjs'
   import { map } from 'rxjs/operators'
   
@@ -14,12 +15,10 @@ import {
     timestamp: string
     path: string
   }
-  
   export interface ControllerResponse<T> {
     data?: T
     message?: string
   }
-  
   @Injectable()
   export class ResponseInterceptor<T>
     implements NestInterceptor<T, ApiResponse<T>>
@@ -29,8 +28,8 @@ import {
       next: CallHandler
     ): Observable<ApiResponse<T>> {
       const http = context.switchToHttp()
-      const request = http.getRequest()
-      const response = http.getResponse()
+      const request = http.getRequest<FastifyRequest>()
+      const response = http.getResponse<FastifyReply>()
   
       return next.handle().pipe(
         map((data: T | ControllerResponse<T>) => {
@@ -53,4 +52,3 @@ import {
       )
     }
   }
-  
