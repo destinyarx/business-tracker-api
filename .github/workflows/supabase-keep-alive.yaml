@@ -2,8 +2,8 @@ name: Supabase Keep Alive
 
 on:
   schedule:
-    # 1:17 AM Manila time every Monday, Wednesday, and Friday
-    - cron: "17 1 * * 1,3,5"
+    # 1:17 AM Manila time on every second calendar day.
+    - cron: "17 1 */2 * *"
       timezone: "Asia/Manila"
 
   # Allows you to test it manually
@@ -34,42 +34,64 @@ jobs:
         run: |
           set -euo pipefail
 
-          ping_project() {
+          update_ping() {
             local project_name="$1"
             local project_url="$2"
             local project_key="$3"
+            local pinged_at
+            local response
 
-            echo "Pinging ${project_name}..."
+            pinged_at="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
-            curl \
-              --fail-with-body \
-              --silent \
-              --show-error \
-              --retry 3 \
-              --retry-all-errors \
-              --connect-timeout 20 \
-              --max-time 60 \
-              --request POST \
-              "${project_url}/rest/v1/rpc/keep_alive" \
-              --header "apikey: ${project_key}" \
-              --header "Content-Type: application/json" \
-              --data '{}'
+            echo "Updating the keep-alive row for ${project_name}..."
 
-            echo
-            echo "${project_name} responded successfully."
+            if ! response="$(
+              curl \
+                --fail-with-body \
+                --silent \
+                --show-error \
+                --retry 3 \
+                --retry-all-errors \
+                --connect-timeout 20 \
+                --max-time 60 \
+                --request PATCH \
+                "${project_url}/rest/v1/ping?id=eq.1&select=id,last_ping_at" \
+                --header "apikey: ${project_key}" \
+                --header "Content-Type: application/json" \
+                --header "Prefer: return=representation" \
+                --data "{\"last_ping_at\":\"${pinged_at}\"}"
+            )"; then
+              echo "${response}"
+              echo "${project_name} update failed."
+              return 1
+            fi
+
+            if ! jq --exit-status \
+              'length == 1 and .[0].id == 1 and (.[0].last_ping_at != null)' \
+              <<<"${response}" >/dev/null; then
+              echo "Unexpected response: ${response}"
+              echo "${project_name} did not update exactly one ping row."
+              return 1
+            fi
+
+            echo "${project_name} updated successfully at ${pinged_at}."
           }
 
-          ping_project \
+          failed=0
+
+          update_ping \
             "Supabase Project 1" \
             "${SUPABASE_URL_1}" \
-            "${SUPABASE_KEY_1}"
+            "${SUPABASE_KEY_1}" || failed=1
 
-          ping_project \
+          update_ping \
             "Supabase Project 2" \
             "${SUPABASE_URL_2}" \
-            "${SUPABASE_KEY_2}"
+            "${SUPABASE_KEY_2}" || failed=1
 
-          ping_project \
+          update_ping \
             "Supabase Project 3" \
             "${SUPABASE_URL_3}" \
-            "${SUPABASE_KEY_3}"
+            "${SUPABASE_KEY_3}" || failed=1
+
+          exit "${failed}"
