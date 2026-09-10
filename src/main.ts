@@ -18,9 +18,8 @@ async function bootstrap() {
 		'application/octet-stream',
 		(_request, payload, done) => done(null, payload),
 	);
-	rawFileParser.addContentTypeParser(
-		/^image\//,
-		(_request, payload, done) => done(null, payload),
+	rawFileParser.addContentTypeParser(/^image\//, (_request, payload, done) =>
+		done(null, payload),
 	);
 
 	const app = await NestFactory.create<NestFastifyApplication>(
@@ -42,10 +41,10 @@ async function bootstrap() {
 
 	app.enableCors({
 		origin: [
-			'http://localhost:3000', 
+			'http://localhost:3000',
 			'https://business-tracker-eta.vercel.app',
 			'https://business-tracker.jeremy-dev.me',
-		], 
+		],
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 		credentials: true, // allow cookies/auth headers
 	});
@@ -55,12 +54,12 @@ async function bootstrap() {
 
 	app.useGlobalPipes(
 		new ValidationPipe({
-		  transform: true,       
-		  whitelist: true,
-		  forbidNonWhitelisted: false,
-		  exceptionFactory: (errors) => new BadRequestException(errors),
+			transform: true,
+			whitelist: true,
+			forbidNonWhitelisted: false,
+			exceptionFactory: (errors) => new BadRequestException(errors),
 		}),
-	)
+	);
 
 	await app.listen(process.env.PORT ?? 3001, '0.0.0.0');
 }
