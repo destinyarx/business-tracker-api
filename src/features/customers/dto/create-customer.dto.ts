@@ -14,8 +14,8 @@ export class CreateCustomerDto {
 	customerType: string;
 
 	@IsOptional()
-	@IsEmail()
-	email: string;
+	@IsEmail({}, { message: 'Email must be a valid email address' })
+	email?: string | null;
 
 	@IsOptional()
 	@IsString()
@@ -25,5 +25,5 @@ export class CreateCustomerDto {
 	@IsString()
 	@Length(11, 11, { message: 'Phone number must be exactly 11 digits' })
 	@Matches(/^[0-9]+$/, { message: 'Phone number must contain only digits' })
-	phone: string;
+	phone?: string | null;
 }
