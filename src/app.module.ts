@@ -22,6 +22,7 @@ import { EmailModule } from './features/email/email.module';
 import { OrdersModule } from './features/orders/orders.module';
 import { FilesModule } from './features/files/files.module';
 import { SalesModule } from './features/sales/sales.module';
+import { DashboardModule } from './features/dashboard/dashboard.module';
 
 @Module({
 	imports: [
@@ -46,6 +47,7 @@ import { SalesModule } from './features/sales/sales.module';
 		ProductModule,
 		OrdersModule,
 		SalesModule,
+		DashboardModule,
 		FilesModule,
 	],
 	controllers: [AppController],
