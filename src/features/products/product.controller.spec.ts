@@ -10,8 +10,8 @@ describe('ProductController', () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [ProductController],
 			providers: [
-				ProductService,
-				{ provide: CACHE_MANAGER, useValue: { del: jest.fn() } },
+				{ provide: ProductService, useValue: {} },
+				{ provide: CACHE_MANAGER, useValue: {} },
 			],
 		}).compile();
 

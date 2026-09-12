@@ -11,10 +11,14 @@ import {
 	deleteProduct,
 	getProductsPaginated,
 } from '../../infrastructure/database/queries/products.queries';
+import { SalesCacheService } from '../sales/sales-cache.service';
 
 @Injectable()
 export class ProductService {
-	constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+	constructor(
+		@Inject(CACHE_MANAGER) private cacheManager: Cache,
+		private readonly salesCache: SalesCacheService,
+	) {}
 
 	async create(createProductDto: CreateProductDto, userId: string) {
 		try {
@@ -62,6 +66,9 @@ export class ProductService {
 		try {
 			const update = await updateProduct(id, updateProductDto, userId);
 			await this.cacheManager.del(`${userId}:/products`);
+			if (update.length > 0 && updateProductDto.title !== undefined) {
+				await this.salesCache.rotate(userId);
+			}
 			return update;
 		} catch (error) {
 			const message =
@@ -74,8 +81,9 @@ export class ProductService {
 
 	async remove(id: number, userId: string) {
 		try {
-			const deleted = await deleteProduct(id);
+			const deleted = await deleteProduct(id, userId);
 			await this.cacheManager.del(`${userId}:/products`);
+			if (deleted.length > 0) await this.salesCache.rotate(userId);
 			return deleted;
 		} catch (error) {
 			const message =

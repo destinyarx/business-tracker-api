@@ -59,14 +59,14 @@ export async function updateProduct(
 			updatedAt: new Date(),
 			updatedBy: userId,
 		})
-		.where(eq(products.id, id))
+		.where(and(eq(products.id, id), eq(products.createdBy, userId)))
 		.returning({ id: products.id });
 }
 
-export async function deleteProduct(id: number) {
+export async function deleteProduct(id: number, userId: string) {
 	return await db
 		.delete(products)
-		.where(eq(products.id, id))
+		.where(and(eq(products.id, id), eq(products.createdBy, userId)))
 		.returning({ id: products.id });
 }
 

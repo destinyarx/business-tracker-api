@@ -2,6 +2,7 @@ export * from './customers';
 export * from './expenses';
 export * from './orders';
 export * from './order_items';
+export * from './sales';
 export * from './products';
 export * from './product_variants';
 export * from './schedules';

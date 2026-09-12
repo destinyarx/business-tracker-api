@@ -1,49 +1,16 @@
-import {
-	IsIn,
-	IsString,
-	IsArray,
-	ValidateNested,
-	IsNumber,
-	IsDefined,
-	IsObject,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-
-class ProductDto {
-	@IsNumber()
-	id: number;
-
-	@IsString()
-	title: string;
-
-	@IsNumber()
-	price: number;
-}
-
-export class ItemDto {
-	@IsString()
-	priceAtPurchase: string;
-
-	@IsNumber()
-	quantity: number;
-
-	@IsString()
-	subtotal: string;
-
-	@IsDefined()
-	@IsObject()
-	@ValidateNested()
-	@Type(() => ProductDto)
-	product: ProductDto;
-}
+import { Transform, type TransformFnParams } from 'class-transformer';
+import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
+import { ORDER_STATUS, type OrderStatus } from './create-order.dto';
 
 export class UpdateOrderStatusDto {
-	@IsArray()
-	@ValidateNested({ each: true })
-	@Type(() => ItemDto)
-	orderItems: ItemDto[];
+	@IsIn(ORDER_STATUS)
+	status: OrderStatus;
 
+	@IsOptional()
+	@Transform(({ value }: TransformFnParams): unknown =>
+		typeof value === 'string' ? value.trim() : value,
+	)
 	@IsString()
-	@IsIn(['pending', 'in_progress', 'completed', 'cancelled'])
-	status: string;
+	@MaxLength(500)
+	reversalReason?: string;
 }

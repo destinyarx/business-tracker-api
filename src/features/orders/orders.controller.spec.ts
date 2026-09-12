@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('OrdersController', () => {
 	let controller: OrdersController;
@@ -10,8 +9,10 @@ describe('OrdersController', () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [OrdersController],
 			providers: [
-				OrdersService,
-				{ provide: CACHE_MANAGER, useValue: { del: jest.fn() } },
+				{
+					provide: OrdersService,
+					useValue: {},
+				},
 			],
 		}).compile();
 

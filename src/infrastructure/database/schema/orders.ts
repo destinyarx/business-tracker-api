@@ -16,9 +16,9 @@ import { orderItems } from '../schema/order_items';
 export const orderStatusEnum = pgEnum('order_status', [
 	'pending',
 	'in_progress',
-	'success',
+	'completed',
+	'cancelled',
 	'failed',
-	'reverted',
 ]);
 
 export const orders = pgTable(
@@ -32,8 +32,8 @@ export const orders = pgTable(
 		totalAmount: numeric('total_amount', { precision: 12, scale: 2 }),
 		totalProfit: numeric('total_profit', { precision: 12, scale: 2 }),
 		profitInaccurate: boolean('is_profit_inaccurate ').default(false),
-		notes: varchar('notes', { length: 50 }),
-		status: varchar('status', { length: 15 }),
+		notes: varchar('notes', { length: 500 }),
+		status: orderStatusEnum('status').default('pending').notNull(),
 		cancelledNotes: varchar('cancelled_notes', { length: 50 }),
 		cancelledAt: timestamp('cancelled_at', { mode: 'date' }),
 

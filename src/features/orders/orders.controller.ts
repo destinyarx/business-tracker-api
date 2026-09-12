@@ -7,7 +7,7 @@ import {
 	Param,
 	Delete,
 	Query,
-	UseInterceptors,
+	ParseIntPipe,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -15,7 +15,6 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status-dto';
 import { GetOrderDto } from './dto/get-order.dto';
 import { UserId } from '../../common/decorators/user-id.decorator';
-import { UserCacheInterceptor } from '../../infrastructure/cache/user-cache.interceptor';
 
 @Controller('orders')
 export class OrdersController {
@@ -41,24 +40,23 @@ export class OrdersController {
 	@Patch(':id/status')
 	async updateOrderStatus(
 		@UserId() userId: string,
-		@Param('id') id: string,
+		@Param('id', ParseIntPipe) id: number,
 		@Body() data: UpdateOrderStatusDto,
 	) {
-		return await this.ordersService.updateOrderStatus(+id, data, userId);
+		return await this.ordersService.updateOrderStatus(id, data, userId);
 	}
 
 	@Patch(':id')
 	update(
 		@UserId() userId: string,
-		@Param('id') id: string,
+		@Param('id', ParseIntPipe) id: number,
 		@Body() updateOrderDto: UpdateOrderDto,
 	) {
-		return this.ordersService.update(+id, userId, updateOrderDto);
+		return this.ordersService.update(id, userId, updateOrderDto);
 	}
 
 	@Delete(':id')
-	@UseInterceptors(UserCacheInterceptor)
-	remove(@UserId() userId: string, @Param('id') id: string) {
-		return this.ordersService.remove(+id, userId);
+	remove(@UserId() userId: string, @Param('id', ParseIntPipe) id: number) {
+		return this.ordersService.remove(id, userId);
 	}
 }

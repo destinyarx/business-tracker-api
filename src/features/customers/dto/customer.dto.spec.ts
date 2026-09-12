@@ -29,7 +29,11 @@ describe('Customer DTO validation', () => {
 				phone,
 			});
 
-			expect(validateSync(customer).some((error) => error.property === 'phone')).toBe(true);
+			expect(
+				validateSync(customer).some(
+					(error) => error.property === 'phone',
+				),
+			).toBe(true);
 		},
 	);
 
@@ -45,17 +49,21 @@ describe('Customer DTO validation', () => {
 		},
 	);
 
-	it.each(['', 'invalid-email', 'customer@'])(
-		'rejects invalid email value %p',
-		(email) => {
-			const customer = Object.assign(new CreateCustomerDto(), {
-				...validCustomer,
-				email,
-			});
+	it.each([
+		'',
+		'invalid-email',
+		'customer@',
+		`${'a'.repeat(40)}@example.com`,
+	])('rejects invalid email value %p', (email) => {
+		const customer = Object.assign(new CreateCustomerDto(), {
+			...validCustomer,
+			email,
+		});
 
-			expect(validateSync(customer).some((error) => error.property === 'email')).toBe(true);
-		},
-	);
+		expect(
+			validateSync(customer).some((error) => error.property === 'email'),
+		).toBe(true);
+	});
 
 	it('applies the nullable contact rules to updates', () => {
 		const validUpdate = Object.assign(new UpdateCustomerDto(), {
@@ -68,9 +76,8 @@ describe('Customer DTO validation', () => {
 		});
 
 		expect(validateSync(validUpdate)).toHaveLength(0);
-		expect(validateSync(invalidUpdate).map((error) => error.property)).toEqual([
-			'email',
-			'phone',
-		]);
+		expect(
+			validateSync(invalidUpdate).map((error) => error.property),
+		).toEqual(['email', 'phone']);
 	});
 });

@@ -1,4 +1,10 @@
-import { Injectable, Inject, BadRequestException } from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	BadRequestException,
+	ConflictException,
+	NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status-dto';
@@ -13,11 +19,14 @@ import {
 	updateOrderStatus,
 	getOrdersPaginated,
 } from '../../infrastructure/database/queries/orders.queries';
-import { ConflictException } from '@nestjs/common';
+import { SalesCacheService } from '../sales/sales-cache.service';
 
 @Injectable()
 export class OrdersService {
-	constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+	constructor(
+		@Inject(CACHE_MANAGER) private cacheManager: Cache,
+		private readonly salesCache: SalesCacheService,
+	) {}
 
 	async create(userId: string, createOrderDto: CreateOrderDto) {
 		try {
@@ -61,31 +70,34 @@ export class OrdersService {
 	}
 
 	async update(id: number, userId: string, updateOrderDto: UpdateOrderDto) {
-		try {
-			const response = await updateOrder(id, updateOrderDto, userId);
-			await this.cacheManager.del(`${userId}:/orders`);
-			return response;
-		} catch (error) {
-			const message =
-				error instanceof Error
-					? error.message
-					: 'Unexpected error occurs';
-			throw new BadRequestException(message);
+		const response = await updateOrder(id, updateOrderDto, userId);
+		if (response.kind === 'not_found') {
+			throw new NotFoundException('Order not found');
 		}
+		if (response.kind === 'completed') {
+			throw new ConflictException(
+				'Move the completed order to another status before editing it',
+			);
+		}
+
+		await this.cacheManager.del(`${userId}:/orders`);
+		if (response.hadSale) await this.salesCache.rotate(userId);
+		return { id: response.id };
 	}
 
 	async remove(id: number, userId: string) {
-		try {
-			const response = await deleteOrder(id);
-			await this.cacheManager.del(`${userId}:/orders`);
-			return response;
-		} catch (error) {
-			const message =
-				error instanceof Error
-					? error.message
-					: 'Unexpected error occurs';
-			throw new BadRequestException(message);
+		const response = await deleteOrder(id, userId);
+		if (response.kind === 'not_found') {
+			throw new NotFoundException('Order not found');
 		}
+		if (response.kind === 'has_sale') {
+			throw new ConflictException(
+				'Orders that have produced a sale cannot be deleted',
+			);
+		}
+
+		await this.cacheManager.del(`${userId}:/orders`);
+		return { id: response.id };
 	}
 
 	async updateOrderStatus(
@@ -93,24 +105,38 @@ export class OrdersService {
 		data: UpdateOrderStatusDto,
 		userId: string,
 	) {
-		try {
-			const response = await updateOrderStatus(id, data, userId);
+		const response = await updateOrderStatus(id, data, userId);
 
-			if (!response) {
-				throw new ConflictException({
-					message: 'Insufficient stock',
-				});
-			}
-
-			await this.cacheManager.del(`${userId}:/orders`);
-			await this.cacheManager.del(`${userId}:/products`);
-			return response;
-		} catch (error) {
-			const message =
-				error instanceof Error
-					? error.message
-					: 'Unexpected error occurs';
-			throw new BadRequestException(message);
+		switch (response.kind) {
+			case 'not_found':
+				throw new NotFoundException('Order not found');
+			case 'invalid_transition':
+				throw new ConflictException(
+					'Order status transition is not allowed',
+				);
+			case 'missing_reversal_reason':
+				throw new BadRequestException(
+					'A reversal reason is required when leaving completed status',
+				);
+			case 'insufficient_stock':
+				throw new ConflictException('Insufficient stock');
+			case 'product_not_found':
+				throw new ConflictException(
+					'An order item references an unavailable product',
+				);
+			case 'sale_not_found':
+				throw new ConflictException(
+					'The completed order has no sale record to reverse',
+				);
+			case 'invalid_order_total':
+				throw new ConflictException('The order has no total amount');
+			case 'unchanged':
+				return { id: response.id, changed: false };
 		}
+
+		await this.cacheManager.del(`${userId}:/orders`);
+		await this.cacheManager.del(`${userId}:/products`);
+		await this.salesCache.rotate(userId);
+		return { id: response.id, changed: true };
 	}
 }

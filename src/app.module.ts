@@ -21,6 +21,7 @@ import { EmailModule } from './features/email/email.module';
 // import { ChatgptModule } from './features/chatgpt/chatgpt.module';
 import { OrdersModule } from './features/orders/orders.module';
 import { FilesModule } from './features/files/files.module';
+import { SalesModule } from './features/sales/sales.module';
 
 @Module({
 	imports: [
@@ -44,6 +45,7 @@ import { FilesModule } from './features/files/files.module';
 		// ChatgptModule,
 		ProductModule,
 		OrdersModule,
+		SalesModule,
 		FilesModule,
 	],
 	controllers: [AppController],

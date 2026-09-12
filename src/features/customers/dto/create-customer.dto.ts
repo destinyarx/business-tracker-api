@@ -4,6 +4,7 @@ import {
 	IsOptional,
 	Length,
 	Matches,
+	MaxLength,
 } from 'class-validator';
 
 export class CreateCustomerDto {
@@ -15,6 +16,7 @@ export class CreateCustomerDto {
 
 	@IsOptional()
 	@IsEmail({}, { message: 'Email must be a valid email address' })
+	@MaxLength(50, { message: 'Email must be 50 characters or fewer' })
 	email?: string | null;
 
 	@IsOptional()
