@@ -63,6 +63,24 @@ export async function updateProduct(
 		.returning({ id: products.id });
 }
 
+export async function updateProductStock(
+	id: number,
+	stock: number,
+	userId: string,
+): Promise<{ id: number; stock: number | null } | undefined> {
+	const [updatedProduct] = await db
+		.update(products)
+		.set({
+			stock,
+			updatedAt: new Date(),
+			updatedBy: userId,
+		})
+		.where(and(eq(products.id, id), eq(products.createdBy, userId)))
+		.returning({ id: products.id, stock: products.stock });
+
+	return updatedProduct;
+}
+
 export async function deleteProduct(id: number, userId: string) {
 	return await db
 		.delete(products)

@@ -21,10 +21,21 @@ export class FilesController {
 		@UserId() userId: string,
 		@Req() req: UploadRequest,
 	) {
-		const buffer = req.isMultipart()
-			? await this.getMultipartBuffer(req)
-			: await this.getRawBuffer(req.body);
-		const contentType = String(req.headers['content-type'] || '');
+		if (req.isMultipart()) {
+			const file = await this.getMultipartFile(req);
+
+			return this.fileService.uploadProductImage(
+				userId,
+				file.buffer,
+				file.filename,
+				file.mimetype,
+			);
+		}
+
+		const buffer = await this.getRawBuffer(req.body);
+		const contentType = String(
+			req.headers['content-type'] || 'application/octet-stream',
+		);
 		const filename = String(req.headers['x-filename'] || 'upload.bin');
 
 		return this.fileService.uploadProductImage(
@@ -35,17 +46,27 @@ export class FilesController {
 		);
 	}
 
-	private async getMultipartBuffer(req: FastifyRequest): Promise<Buffer> {
+	private async getMultipartFile(req: FastifyRequest): Promise<{
+		buffer: Buffer;
+		filename: string;
+		mimetype: string;
+	}> {
 		const file = await req.file();
 
-		if (!file) return Buffer.alloc(0);
+		if (!file) {
+			throw new BadRequestException('Image file is required');
+		}
 
 		if (file.fieldname !== 'image') {
 			file.file.resume();
 			throw new BadRequestException('Unexpected field');
 		}
 
-		return file.toBuffer();
+		return {
+			buffer: await file.toBuffer(),
+			filename: file.filename,
+			mimetype: file.mimetype,
+		};
 	}
 
 	private async getRawBuffer(body: unknown): Promise<Buffer> {

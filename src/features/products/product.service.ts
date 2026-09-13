@@ -1,6 +1,12 @@
-import { Injectable, BadRequestException, Inject } from '@nestjs/common';
+import {
+	Injectable,
+	BadRequestException,
+	Inject,
+	NotFoundException,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { UpdateProductStockDto } from './dto/update-product-stock.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import {
@@ -10,6 +16,7 @@ import {
 	updateProduct,
 	deleteProduct,
 	getProductsPaginated,
+	updateProductStock,
 } from '../../infrastructure/database/queries/products.queries';
 import { SalesCacheService } from '../sales/sales-cache.service';
 
@@ -77,6 +84,33 @@ export class ProductService {
 					: 'Unexpected error occurs';
 			throw new BadRequestException(message);
 		}
+	}
+
+	async updateStock(
+		id: number,
+		updateProductStockDto: UpdateProductStockDto,
+		userId: string,
+	) {
+		let updatedProduct: { id: number; stock: number | null } | undefined;
+
+		try {
+			updatedProduct = await updateProductStock(
+				id,
+				updateProductStockDto.stock,
+				userId,
+			);
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: 'Unexpected error occurs';
+			throw new BadRequestException(message);
+		}
+
+		if (!updatedProduct) throw new NotFoundException('Product not found');
+
+		await this.cacheManager.del(`${userId}:/products`);
+		return updatedProduct;
 	}
 
 	async remove(id: number, userId: string) {

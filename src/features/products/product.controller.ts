@@ -14,6 +14,7 @@ import { UserCacheInterceptor } from '../../infrastructure/cache/user-cache.inte
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { UpdateProductStockDto } from './dto/update-product-stock.dto';
 import { UserId } from '../../common/decorators/user-id.decorator';
 
 @Controller('products')
@@ -46,6 +47,19 @@ export class ProductController {
 		@Body() updateProductDto: UpdateProductDto,
 	) {
 		return this.productService.update(+id, updateProductDto, userId);
+	}
+
+	@Patch(':id/stock')
+	updateStock(
+		@UserId() userId: string,
+		@Param('id', ParseIntPipe) id: number,
+		@Body() updateProductStockDto: UpdateProductStockDto,
+	) {
+		return this.productService.updateStock(
+			id,
+			updateProductStockDto,
+			userId,
+		);
 	}
 
 	@Delete(':id')
