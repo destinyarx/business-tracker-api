@@ -1,5 +1,16 @@
-import { IsInt, IsString, IsOptional } from 'class-validator';
+import { IsIn, IsInt, IsString, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
+
+export const ORDER_DATE_RANGES = [
+	'all',
+	'today',
+	'yesterday',
+	'this_week',
+] as const;
+export const ORDER_SORT_DIRECTIONS = ['asc', 'desc'] as const;
+
+export type OrderDateRange = (typeof ORDER_DATE_RANGES)[number];
+export type OrderSortDirection = (typeof ORDER_SORT_DIRECTIONS)[number];
 
 export class GetOrderDto {
 	@IsOptional()
@@ -21,12 +32,12 @@ export class GetOrderDto {
 	searchKey?: string;
 
 	@IsOptional()
-	@IsString()
-	timePeriod?: string;
+	@IsIn(ORDER_DATE_RANGES)
+	timePeriod?: OrderDateRange;
 
 	@IsOptional()
-	@IsString()
-	sort?: string;
+	@IsIn(ORDER_SORT_DIRECTIONS)
+	sort?: OrderSortDirection;
 
 	@IsOptional()
 	@IsString()

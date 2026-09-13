@@ -23,10 +23,7 @@ import type { Order } from '../schema/orders';
 import type { Product } from '../schema/products';
 import type { OrderStatus } from '../../../features/orders/dto/create-order.dto';
 import { getOrderTransition } from '../../../features/orders/order-status';
-import {
-	getDateRangeFromPeriod,
-	type TimePeriod,
-} from '../../../common/utils/date-range';
+import { getOrderDateRange } from '../../../features/orders/order-date-range';
 
 type Tx = Parameters<typeof db.transaction>[0] extends (tx: infer T) => any
 	? T
@@ -98,9 +95,7 @@ export async function addOrderItems(id: number, items: CreateOrderItemDto[]) {
 }
 
 export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
-	const range = params?.timePeriod
-		? getDateRangeFromPeriod(params.timePeriod as TimePeriod)
-		: undefined;
+	const range = getOrderDateRange(params.timePeriod);
 	const orderBy: any[] = [];
 
 	orderBy.push(
@@ -131,20 +126,10 @@ export async function getOrdersPaginated(params: GetOrderDto, userId: string) {
 				? eq(orders.status, params.filter as OrderStatus)
 				: undefined,
 
-			params?.timePeriod
+			range
 				? and(
-						gte(
-							params?.sortByStatus
-								? orders.statusUpdatedAt
-								: orders.createdAt,
-							range!.start,
-						),
-						lte(
-							params?.sortByStatus
-								? orders.statusUpdatedAt
-								: orders.createdAt,
-							range!.end,
-						),
+						gte(orders.createdAt, range.start),
+						lte(orders.createdAt, range.end),
 					)
 				: undefined,
 		),
