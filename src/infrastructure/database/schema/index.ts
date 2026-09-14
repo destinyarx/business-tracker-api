@@ -1,3 +1,4 @@
+export * from './account-erasure-requests';
 export * from './customers';
 export * from './expenses';
 export * from './orders';

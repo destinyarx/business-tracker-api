@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '../../integrations/supabase/supabase.constants';
 
@@ -6,6 +7,7 @@ import { SUPABASE_CLIENT } from '../../integrations/supabase/supabase.constants'
 export class FilesService {
 	constructor(
 		@Inject(SUPABASE_CLIENT) private readonly supabase: SupabaseClient,
+		private readonly configService: ConfigService,
 	) {}
 
 	async uploadProductImage(
@@ -14,7 +16,7 @@ export class FilesService {
 		filename: string,
 		mimetype: string,
 	) {
-		const bucket = process.env.SUPABASE_STORAGE_BUCKET!;
+		const bucket = this.storageBucket;
 		const name = `${userId}-${Date.now()}-${crypto.randomUUID()}-${filename}`;
 		const path = `${userId}/${name}`;
 
@@ -26,7 +28,6 @@ export class FilesService {
 			});
 
 		if (error) {
-			console.log(error);
 			throw error;
 		}
 
@@ -43,7 +44,7 @@ export class FilesService {
 
 	async deleteProductImage(userId: string, filename: string) {
 		const { error } = await this.supabase.storage
-			.from('product-images')
+			.from(this.storageBucket)
 			.remove([`${userId}/${filename}`]);
 
 		if (error) {
@@ -51,5 +52,9 @@ export class FilesService {
 		}
 
 		return true;
+	}
+
+	private get storageBucket(): string {
+		return this.configService.getOrThrow<string>('SUPABASE_STORAGE_BUCKET');
 	}
 }

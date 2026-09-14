@@ -4,6 +4,7 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { UserCacheInterceptor } from './user-cache.interceptor';
+import { UserCachePurgeService } from './user-cache-purge.service';
 
 function createRedisUrl(configService: ConfigService): string {
 	const redisUrl = new URL(configService.getOrThrow<string>('REDIS_URL'));
@@ -35,7 +36,7 @@ function createRedisUrl(configService: ConfigService): string {
 			}),
 		}),
 	],
-	providers: [UserCacheInterceptor],
-	exports: [CacheModule, UserCacheInterceptor],
+	providers: [UserCacheInterceptor, UserCachePurgeService],
+	exports: [CacheModule, UserCacheInterceptor, UserCachePurgeService],
 })
 export class InfrastructureCacheModule {}

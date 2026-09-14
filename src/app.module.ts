@@ -23,6 +23,7 @@ import { OrdersModule } from './features/orders/orders.module';
 import { FilesModule } from './features/files/files.module';
 import { SalesModule } from './features/sales/sales.module';
 import { DashboardModule } from './features/dashboard/dashboard.module';
+import { AccountErasureModule } from './features/account-erasure/account-erasure.module';
 
 @Module({
 	imports: [
@@ -49,6 +50,7 @@ import { DashboardModule } from './features/dashboard/dashboard.module';
 		SalesModule,
 		DashboardModule,
 		FilesModule,
+		AccountErasureModule,
 	],
 	controllers: [AppController],
 	providers: [

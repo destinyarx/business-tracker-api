@@ -25,6 +25,7 @@ async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(
 		AppModule,
 		fastifyAdapter,
+		{ rawBody: true },
 	);
 
 	await app.register(fastifyMultipart, {
