@@ -43,6 +43,7 @@ async function bootstrap() {
 	app.enableCors({
 		origin: [
 			'http://localhost:3000',
+			'http://localhost:8081',
 			'https://business-tracker-eta.vercel.app',
 			'https://business-tracker.jeremy-dev.me',
 		],

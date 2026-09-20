@@ -29,7 +29,8 @@ export class ClerkService {
 		}
 
 		return [
-			'http://localhost:3000',
+      'http://localhost:3000',
+			'http://localhost:8081',
 			'https://business-tracker-eta.vercel.app',
 			'https://business-tracker.jeremy-dev.me',
 		];
